@@ -11,6 +11,8 @@ um comentário, mais à frente vamos ver, são 3 aspas duplas para abrir e 3 par
 o DocString pode ser com 3 aspas simpes tb
 '''
 
+# O Python é case sensitive, igual ao JS
+
 print(123)
 #comentário
 print(456)
