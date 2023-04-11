@@ -37,6 +37,11 @@ print(type('toller'))
 print(True)
 print(10==10)
 
+# conversões
+print(int('1'))
+print(float('1'))
+print(float('1') + 1)
+
 
 
 
