@@ -34,3 +34,7 @@ print(formato)
 format = 'a={nome0} a={nome0} a={nome0} b={nome1} c={nome2:.2f}'
 formato = format.format(nome0=a, nome1=b, nome2=c) # lembra o format do Delphi
 print(formato)
+
+# Como quebrar uma f String:
+print(f'teste de quebra de '
+      f'fstrings')
