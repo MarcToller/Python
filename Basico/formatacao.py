@@ -1,3 +1,10 @@
+
+
+
+
+#################### VER TB O ARQUIVO interpolacao_string.py
+#################### VER TB O ARQUIVO f_strings.py
+
 vNome = 'Marcelo'
 vPeso = 95
 vAltura = 1.80
