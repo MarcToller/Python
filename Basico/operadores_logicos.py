@@ -33,7 +33,7 @@
 # 0 1 2 3 4 5
 # T o l l e r
 #-6-5-4-3-2-1 # quando o indice é negativo, começa no -1 pois o 0 é foi considerado no inicio positivo  
-nome = 'Toller';
+nome = 'Toller'
 print(nome[2]) # vai mostrar l
 print(nome[-2]) # vai mostrar e
 print('r' in nome) # true
