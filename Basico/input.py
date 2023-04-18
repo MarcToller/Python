@@ -9,4 +9,4 @@ numero2 = input('Digite outro número: ')
 
 #if type(numero1) == int
 
-print(f'A soma dos números é {numero1 + numero2}') 
+print(f'A soma dos números é {int(numero1) + int(numero2)}') 
