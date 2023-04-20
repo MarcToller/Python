@@ -1,4 +1,5 @@
 import random
+import os
 
 
 ListaDePalavras = ['ovo', 'Carro', 'Casa', 'abacate', 'tomate', 'Computador', 'comida']
@@ -16,7 +17,7 @@ while True:
         if JogarDenovo.upper() == 'N':
             break
 
-    while True:
+    while True:        
         tentativas += 1
         letra = input('Digite uma letra: ').upper()
 
@@ -35,7 +36,9 @@ while True:
             if letra in AcumuladorLetra:
                 PalavraDigitada += letra
             else:
-                PalavraDigitada += '*'                      
+                PalavraDigitada += '*' 
+
+        os.system('cls')                             
         print(PalavraDigitada)
         if PalavraDigitada == PalavraSorteada:
             print(f'PARABÉNS, VOCÊ COMPLETOU A PALAVRA EM {tentativas} TENTATIVAS.')
