@@ -27,6 +27,9 @@ while True:
         
         if letra in PalavraSorteada and letra not in AcumuladorLetra:
             AcumuladorLetra += letra
+        elif letra in AcumuladorLetra:    
+            print('Você já digitou esta letra!')    
+            continue
         else:
             print('Palavra não tem essa letra!')    
             continue
