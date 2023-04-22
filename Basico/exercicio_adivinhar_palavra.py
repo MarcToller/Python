@@ -1,7 +1,6 @@
 import random
 import os
 
-
 ListaDePalavras = ['ovo', 'Carro', 'Casa', 'abacate', 'tomate', 'Computador', 'comida']
 JogarDenovo = False
 
