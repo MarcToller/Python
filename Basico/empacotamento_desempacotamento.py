@@ -18,3 +18,12 @@ print(nome1, resto)
 # então se eu quiser só o 3 nome por exemplo:
 _, _, nome = ['Maria', 'Helena', 'Luiz']
 print(nome)
+
+cores = ['amarelo', 'branco', 'azul']
+print(*cores) # vai imprimir um valor do lado do outro
+
+#com string tb funciona:
+string = 'marcelo'
+print(*string)
+# ainda posso colocar um separador:
+print(*string, sep='-')
