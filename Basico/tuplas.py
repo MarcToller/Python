@@ -1,7 +1,9 @@
 """
 
 
+
 Tipo tupla - Uma lista imutável
+É PRATICAMENTA UMA CONSTANTE POIS NÃO SE PPODE ADICIONAR NEM EDITAR E NEM REMOVER VALORES
 
 """
 
