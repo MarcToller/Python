@@ -2,6 +2,7 @@ import random
 import os
 
 ListaDePalavras = ['ovo', 'Carro', 'Casa', 'abacate', 'tomate', 'Computador', 'comida']
+letras_digitadas = [] # poderia ser tuplas pois os valores não vão mudar 
 JogarDenovo = False
 
 while True:    
@@ -16,7 +17,10 @@ while True:
         if JogarDenovo.upper() == 'N':
             break
 
-    while True:        
+    while True:  
+        if len(letras_digitadas) > 0:
+            print('Letras já digitadas:', *letras_digitadas)
+
         tentativas += 1
         letra = input('Digite uma letra: ').upper()
 
@@ -24,6 +28,9 @@ while True:
             print('Digite apenas uma letra!')
             continue
         
+        if not letra in letras_digitadas:
+            letras_digitadas += letra
+
         if letra in PalavraSorteada and letra not in AcumuladorLetra:
             AcumuladorLetra += letra
         elif letra in AcumuladorLetra:    
@@ -39,9 +46,10 @@ while True:
                 PalavraDigitada += letra
             else:
                 PalavraDigitada += '*' 
+        os.system('cls')
 
-        os.system('cls')                             
         print(PalavraDigitada)
+
         if PalavraDigitada == PalavraSorteada:
             print(f'PARABÉNS, VOCÊ COMPLETOU A PALAVRA EM {tentativas} TENTATIVAS.')
             JogarDenovo = True
