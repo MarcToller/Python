@@ -24,22 +24,30 @@ O primeiro dígito do CPF é 7                                 resultado é o va
 import random
 
 quantidade_cpfs = int(input('Quantos CPFs deseja gerar? '))
-quantidade = 0
 cpf_somente_numeros = ''
 cpf_gerado = ''
+parte1 = ''
+parte2 = ''
+parte3 = ''
+parte4 = ''
 
-while quantidade <= quantidade_cpfs:
-    digito = 1
+#for _ in range(quantidade_cpfs): Assim com o _ é qdo não queremos usar a variável, o _ é uma var de interação mas sem utilidade, só para poder percorrer o for por exemplo
+
+for qtd in range(quantidade_cpfs):
     cpf_somente_numeros = ''
     cpf_gerado = ''
-    while digito <= 9:
-        digito += 1   
+    parte1 = ''
+    parte2 = ''
+    parte3 = ''
+    parte4 = ''
+
+    for i in range(9):        
         cpf_somente_numeros += str(random.randint(0, 9))        
     
     cpf_digito_calculado = 0
     soma_digitos = 0
 
-    for posicao_digito in [10,11]:
+    for posicao_digito in (10,11):
         if len(cpf_gerado) == 0:
             cpf_gerado = cpf_somente_numeros[:posicao_digito-1]            
 
@@ -51,7 +59,14 @@ while quantidade <= quantidade_cpfs:
         resto = soma_digitos % 11    
 
         cpf_digito_calculado = resto if resto <= 9 else 0
-        cpf_gerado = cpf_gerado + str(cpf_digito_calculado)                 
-    quantidade += 1
+        parte4 += str(cpf_digito_calculado)
+        cpf_gerado = cpf_gerado + str(cpf_digito_calculado) 
 
-    print(f'CPF gerado: {cpf_gerado}')
+    parte1 = cpf_gerado[0:3]
+    parte2 = cpf_gerado[3:6]
+    parte3 = cpf_gerado[7:9]
+
+    formato = '{}.{}.{}-{}'
+    cpf_gerado = formato.format(parte1, parte2, parte3, parte4)
+
+    print(f'{qtd+1} - CPF gerado: {cpf_gerado}')
