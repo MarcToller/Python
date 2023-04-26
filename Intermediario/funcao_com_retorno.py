@@ -9,6 +9,13 @@ def soma(x, y):
     return x + y # o return funciona igual ao JS: Qdo é chamado ele não executa mais nada abaixo.
 
 
+def par_ou_impar(numero):
+    if numero % 2 == 0:
+        return 'par' 
+    # neste caso não precisa do Else pois o return para o fluxo!
+    return 'ímpar'
+
+
 # variavel = soma(1, 2)
 # variavel = int('1')
 soma1 = soma(2, 2)
