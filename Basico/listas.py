@@ -24,6 +24,16 @@ del lista[-1] # apaga o último item da lista
 lista.insert(100, 5) # insere no um valor em determinado indice, o oposto do pop. neste caso, se não existir o indie 100 ele não vai gerar erro, vai simplesmente adicionar na última posição.
 print(lista[4])
 
+# ordenar listas
+lista3 = [2,39,8,41,12,54,56]
+lista3.sort() # altera a propria lista
+lista3.sort(reverse=True) # inverte a ordenação
+
+# assim ordena e cria uma nova lista
+lista4 = sorted(lista3, reverse=True)
+print(lista3)
+print(lista4)
+
 
 #  extend - estende a lista
 #  + - concatena listas
