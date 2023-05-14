@@ -10,6 +10,10 @@ __all__ = [
     'soma_do_modulo',
 ]
 
+import package1.modulo2
+
+package1.modulo2.funcao_do_modulo_2()
+
 def soma_do_modulo(x, y):
     return x + y
 

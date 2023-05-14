@@ -20,6 +20,11 @@ from package1 import modulo1
 print(modulo1.soma_do_modulo(1,2))
 
 
+################ VAI DAR UM PROBLEMA AQUI POIS EU ESTOU IMPORTANDO O MODULO1 DO PACKAGE E LÁ NO MODULO1 IMPORTO O
+################ MODULO2 E EXECUTO UMA FUNÇÃO DELE, ISSO ACONTECE POIS TESE AQUI É O MAIN E O PONTO DE VISTA MUDA
+################ POIS O MAIN NÃO CONHECE O MODULO2
+################ PARA FUNCIONAR, NO MODULO1 TENHO QUE IMPORTAR ASSIM import package1.modulo2, VAI FUNCIONAR NO
+################ MAIN, MAS NÃO VAI FUNCIONAR LÁ NO MODULO1, JUSTAMENTE POR CAUSA DO PONTO DE VISTA
 
 
 print(*path, sep='\n') # para ver os caminhos que estão no path, podemos alterar e incluir mais caminhos que estejam até fora do nosso escopo, mas só se precisar mesmo..
