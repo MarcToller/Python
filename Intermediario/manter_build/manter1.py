@@ -16,7 +16,8 @@ def executar_tarefa(arquivo):
     try:
         retorno.wait(timeout=20)
     except subprocess.TimeoutExpired:
-        retorno.kill()    
+        retorno.kill()  
+        return  
 
     # Código para executar a tarefa
 
