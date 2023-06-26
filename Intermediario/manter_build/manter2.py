@@ -16,7 +16,7 @@ def teste(retorno: subprocess.Popen):
 
     while True:
         time.sleep(10)
-        output, _ = retorno.communicate(timeout=20)
+        output, _ = retorno.communicate(timeout=30)
         if 'Pressione qualquer tecla para sair'.upper() in str(output).upper():
             retorno.terminate()
 
@@ -59,8 +59,7 @@ for nome_arquivo in os.listdir(caminho_pasta):
             #print(caminho_completo)
             try:
                 #retorno = subprocess.call(nome_arquivo, shell=True, cwd=caminho_pasta) 
-                retorno = subprocess.Popen(nome_arquivo, shell=True, cwd=caminho_pasta, stdout=subprocess.PIPE, stderr=subprocess.
-                PIPE) 
+                retorno = subprocess.Popen(nome_arquivo, shell=True, cwd=caminho_pasta, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
                 retorno.communicate()
 
                 thread = threading.Thread(target=teste(retorno))
