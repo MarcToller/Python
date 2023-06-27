@@ -59,8 +59,7 @@ for nome_arquivo in os.listdir(caminho_pasta):
             #print(caminho_completo)
             try:
                 #retorno = subprocess.call(nome_arquivo, shell=True, cwd=caminho_pasta) 
-                retorno = subprocess.Popen(nome_arquivo, shell=True, cwd=caminho_pasta, stdout=subprocess.PIPE, stderr=subprocess.
-                PIPE) 
+                retorno = subprocess.Popen(nome_arquivo, shell=True, cwd=caminho_pasta, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
                 retorno.communicate()
 
                 thread = threading.Thread(target=teste(retorno))
