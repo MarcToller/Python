@@ -19,9 +19,6 @@ VALOR_COM_FALHA = 'Apresenta Falha'
 
 hora_inicio = datetime.now()
 
-listaOK = []
-listaErros = []
-
 lista_resultados = []
 
 CAMINHO_PASTA = 'C:\Bin.separado\Delphi\Atalhos\Executaveis\ManterBuild'
@@ -39,7 +36,7 @@ def executar_tarefa(arquivo):
         vCaminhoOut = os.path.join(CAMINHO_PASTA, vCaminhoOut)          
 
         with open(vCaminhoOut, 'w') as arquivo_saida:
-            subprocess.run([caminho_completo, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA, timeout=80, stdout=arquivo_saida)
+            subprocess.run([caminho_completo, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA, timeout=300, stdout=arquivo_saida)
         
         vfinal = datetime.now()  
         dicionario_resultado[CHAVE_TEMPO] = (vfinal - vinicio).total_seconds()
@@ -60,10 +57,9 @@ def executar_tarefa(arquivo):
 max_threads1 = 2
 max_threads2 = 2
 
-
 #lista_arquivos_pesados = ['04_TestaWinDP.bat', '03_TestaWinContas.bat']
-#lista_arquivos_leves = ['01_TestaDCComparaEstruturas.bat', '02_TestaFrameWorkDTC.bat', '03_TestaWinContas.bat', '04_TestaWinDP.bat' ]
-#lista_arquivos_pesados = ['ContabMillenium.bat', 'WinCaixaNew.bat', 'WinLalur.bat']
+#lista_arquivos_leves = ['02_TestaFrameWorkDTC.bat', '03_TestaWinContas.bat', '04_TestaWinDP.bat', '01_TestaDCComparaEstruturas.bat']
+#lista_arquivos_pesados = ['XML_Importer.bat', 'WinLalur.bat']
 #lista_arquivos_leves = ['01_TestaDCComparaEstruturas.bat', '02_TestaFrameWorkDTC.bat', '04_TestaWinDP.bat', '03_TestaWinContas.bat']
 
 # Criação dos ThreadPoolExecutors
