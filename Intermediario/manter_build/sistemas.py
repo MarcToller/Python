@@ -1,4 +1,4 @@
-lista_sistemas = [
+lista_sistemas2 = [
     
     {'sistema_1': '02_TestaFrameWorkDTC.bat',
      'timeout_1': 10,
@@ -21,7 +21,7 @@ lista_sistemas = [
 #lista_arquivos_pesados = ['XML_Importer.bat', 'WinLalur.bat']
 
 
-lista_sistemas1 = [
+lista_sistemas = [
     {'sistema_1': 'WinDP.bat',
      'timeout_1': 10,
      'sistema_2': '04_TestaWinDP.bat',
