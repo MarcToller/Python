@@ -1,4 +1,4 @@
-lista_sistemas2 = [
+lista_execusao_assincrona = [
     
     {'sistema_1': '02_TestaFrameWorkDTC.bat',
      'timeout_1': 10,
@@ -21,7 +21,7 @@ lista_sistemas2 = [
 #lista_arquivos_pesados = ['XML_Importer.bat', 'WinLalur.bat']
 
 
-lista_sistemas = [
+lista_execusao_assincrona1 = [
     {'sistema_1': 'WinDP.bat',
      'timeout_1': 10,
      'sistema_2': '04_TestaWinDP.bat',
