@@ -1,5 +1,29 @@
 lista_execusao_assincrona = [
     
+    ({'sistema': '02_TestaFrameWorkDTC.bat',
+     'tempo_limite': 300},
+
+     {'sistema': 'XML_Importer.bat',
+      'tempo_limite': 300,}),
+
+    ({'sistema': '03_TestaWinContas.bat',
+      'tempo_limite': 300},
+
+    {'sistema': 'WinLalur.bat',
+     'tempo_limite': 30,}), 
+
+    ({'sistema': '04_TestaWinDP.bat',
+      'tempo_limite': 300},
+
+     {'sistema': '01_TestaDCComparaEstruturas.bat',
+      'tempo_limite': 300,}), 
+]     
+
+
+
+
+lista_execusao_assincrona2 = [
+    
     {'sistema_1': '02_TestaFrameWorkDTC.bat',
      'timeout_1': 10,
      'sistema_2': 'XML_Importer.bat',

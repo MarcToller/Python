@@ -11,6 +11,8 @@ import json
 import shutil
 
 
+
+
 CHAVE_SISTEMA = 'sistema'
 CHAVE_STATUS = 'status'
 CHAVE_TEMPO = 'tempo'
@@ -27,6 +29,7 @@ FALHA_TIME_OUT = 'Falha de timeout'
 hora_inicio = datetime.now()
 lista_resultados = []
 lista_execusao_sincrona = []
+dicionario_sincrono = {}
 
 shutil.rmtree(CAMINHO_PASTA_RESULTADO, ignore_errors=True)
 
@@ -44,8 +47,7 @@ def status_arquivo_saida(nome_arquivo) -> str:
             return FALHA_TIME_OUT
 
 def executar_arquivo_bat(arquivo: str, tempo_limite: int):
-    dicionario_resultado = {}
-    dicionario_sincrono = {}
+    dicionario_resultado = {}    
     try:     
         dicionario_resultado[CHAVE_SISTEMA] = arquivo
         dicionario_resultado[CHAVE_STATUS] = VALOR_SEM_FALHA 
@@ -63,9 +65,10 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int):
             subprocess.run([caminho_completo_bat, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA_MANTER_BUILD, timeout=tempo_limite, stdout=arquivo_saida)
         
         vfinal = datetime.now() 
-        print(f'Arquivo {arquivo} - Início: {vfinal}') 
+        print(f'Arquivo {arquivo} - final: {vfinal}') 
         
-        dicionario_resultado[CHAVE_TEMPO] = (vfinal - vinicio).total_seconds() // 60
+        vTotalSegundos = (vfinal - vinicio).total_seconds() 
+        dicionario_resultado[CHAVE_TEMPO] = int(vTotalSegundos)
     except subprocess.CalledProcessError:
         dicionario_resultado[CHAVE_STATUS] = 'Falha Desconhecida' 
         lista_resultados.append(dicionario_resultado)        
@@ -77,6 +80,7 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int):
         if vStatus == FALHA_ASSINAR_D: 
             dicionario_sincrono[CHAVE_SISTEMA] = arquivo           
             dicionario_sincrono[CHAVE_TEMPO_LIMITE] = tempo_limite
+            dicionario_sincrono[CHAVE_STATUS] = FALHA_ASSINAR_D 
             os.remove(vCaminhoArquivoSaida)
             lista_execusao_sincrona.append(dicionario_sincrono)
             return
@@ -92,12 +96,12 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int):
 # sistemas = ()
 for sistemas in lista_execusao_assincrona:            
     with ThreadPoolExecutor(max_workers=2) as thread_pool_dois_sistemas:   
-        thread = partial(executar_arquivo_bat, sistemas.item[0].get(CHAVE_SISTEMA), sistemas.item[0].get(CHAVE_TEMPO_LIMITE))
+        thread = partial(executar_arquivo_bat, sistemas[0].get(CHAVE_SISTEMA), sistemas[0].get(CHAVE_TEMPO_LIMITE))
         thread_pool_dois_sistemas.submit(thread)  
 
-        if sistemas.item[1].get(CHAVE_SISTEMA):
-            thread = partial(executar_arquivo_bat, sistemas.item[1].get(CHAVE_SISTEMA), sistemas.item[1].get(CHAVE_TEMPO_LIMITE))
-            thread_pool_dois_sistemas.submit(thread)            
+        if sistemas[1].get(CHAVE_SISTEMA):
+            thread1 = partial(executar_arquivo_bat, sistemas[1].get(CHAVE_SISTEMA), sistemas[1].get(CHAVE_TEMPO_LIMITE))
+            thread_pool_dois_sistemas.submit(thread1)            
         
     thread_pool_dois_sistemas.shutdown(wait=True)
 
@@ -105,13 +109,15 @@ for sistemas in lista_execusao_assincrona:
 if len(lista_execusao_sincrona) > 0:
     with ThreadPoolExecutor(max_workers=1) as thread_pool_sistema_unico:   
         for sistema in lista_execusao_sincrona:
+            if dicionario_sincrono[CHAVE_STATUS] == FALHA_ASSINAR_D:
+                print(f'Sistema {sistema[CHAVE_SISTEMA]} executando novamente devido a {FALHA_ASSINAR_D}')
             thread = partial(executar_arquivo_bat, sistema[CHAVE_SISTEMA], sistema[CHAVE_TEMPO_LIMITE])
             thread_pool_sistema_unico.submit(thread)  
         
     thread_pool_sistema_unico.shutdown(wait=True)
 
 
-os.system('cls')
+#os.system('cls')
 
 hora_fim = datetime.now()
 tempo_decorrido = (hora_fim - hora_inicio).total_seconds() // 60
