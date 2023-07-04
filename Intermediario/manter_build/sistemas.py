@@ -1,4 +1,56 @@
-lista_execusao_assincrona = [
+import os
+import json
+
+CHAVE_SISTEMA = 'sistema'
+CHAVE_STATUS = 'status'
+CHAVE_TEMPO = 'tempo_em_segundos'
+CHAVE_TEMPO_LIMITE = 'tempo_limite'
+CHAVE_LISTA_SINCRONA = 'lista_sincrona'
+CHAVE_LISTA_ASSINCRONA = 'lista_assincrona'
+VALOR_SEM_FALHA = 'Build OK'
+CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
+CAMINHO_PASTA_RESULTADO = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'Resultado')
+CAMINHO_PASTA_FALHA = os.path.join(CAMINHO_PASTA_RESULTADO, 'Falhas')
+FALHA_BUILD = 'Build FAILED.'
+FALHA_BUILD_MENSAGEM = 'Falha no Build'
+FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
+FALHA_TIME_OUT = 'Falha de timeout'
+CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_RESULTADO, 'resultado.json')
+PERCENTUAL_TEMPO_LIMITE = 30
+
+
+def retorna_listas() -> dict:    
+    lista_sincrona = []
+    lista_assincrona = []        
+    result = {}
+    adicionar_lista_assincrona = False;
+
+    if os.path.exists(CAMINHO_RESULTADO_JSON):
+        with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
+            lista_arquivo = json.load(arquivo)
+            for dic_arquivo in lista_arquivo:
+              dic_assic = {}
+              dic_assic[CHAVE_SISTEMA] = dic_arquivo[CHAVE_SISTEMA] 
+              dic_assic[CHAVE_TEMPO_LIMITE] = dic_arquivo[CHAVE_TEMPO] + ((dic_arquivo[CHAVE_TEMPO] * PERCENTUAL_TEMPO_LIMITE) // 100 ) 
+              lista_assincrona.append(dic_assic)
+
+    for nome_arquivo in os.listdir(CAMINHO_PASTA_MANTER_BUILD):        
+        if len(lista_assincrona) > 0:
+            adicionar_lista_assincrona = not any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_assincrona)            
+            
+        if adicionar_lista_assincrona and nome_arquivo[0] != '_':
+        #if '_Testa' in nome_arquivo:
+            dic_sincrono = {}
+            dic_sincrono[CHAVE_SISTEMA] = nome_arquivo
+            dic_sincrono[CHAVE_TEMPO_LIMITE] = 0
+            lista_sincrona.append(dic_sincrono)
+
+    result[CHAVE_LISTA_ASSINCRONA] = lista_assincrona
+    result[CHAVE_LISTA_SINCRONA] = lista_sincrona    
+    return result
+
+
+lista_execusao_assincrona80 = [
     
     ({'sistema': '02_TestaFrameWorkDTC.bat',
      'tempo_limite': 300},
@@ -17,6 +69,18 @@ lista_execusao_assincrona = [
 
      {'sistema': '01_TestaDCComparaEstruturas.bat',
       'tempo_limite': 300,}), 
+      
+    ({'sistema': '05_TestaContabMillenium.bat',
+      'tempo_limite': 300},
+
+     {'sistema': 'GestaCon.bat',
+      'tempo_limite': 300,}),       
+
+    ({'sistema': 'GestImov.bat',
+      'tempo_limite': 300},
+
+     {'sistema': 'GestImovServidor.bat',
+      'tempo_limite': 300,}),       
 ]     
 
 

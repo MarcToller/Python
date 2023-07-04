@@ -6,29 +6,18 @@ from functools import partial
 import subprocess
 import os
 from datetime import datetime
-from sistemas import lista_execusao_assincrona
+from sistemas import *
 import json
 import shutil
 
 
 
-
-CHAVE_SISTEMA = 'sistema'
-CHAVE_STATUS = 'status'
-CHAVE_TEMPO = 'tempo'
-CHAVE_TEMPO_LIMITE = 'tempo_limite'
-VALOR_SEM_FALHA = 'Build OK'
-CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
-CAMINHO_PASTA_RESULTADO = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'Resultado')
-CAMINHO_PASTA_FALHA = os.path.join(CAMINHO_PASTA_RESULTADO, 'Falhas')
-FALHA_BUILD = 'Build FAILED.'
-FALHA_BUILD_MENSAGEM = 'Falha no Build'
-FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
-FALHA_TIME_OUT = 'Falha de timeout'
+listas = retorna_listas()
+lista_execusao_sincrona = listas[CHAVE_LISTA_SINCRONA]
+lista_execusao_assincrona = listas[CHAVE_LISTA_ASSINCRONA]
 
 hora_inicio = datetime.now()
 lista_resultados = []
-lista_execusao_sincrona = []
 dicionario_sincrono = {}
 
 shutil.rmtree(CAMINHO_PASTA_RESULTADO, ignore_errors=True)
@@ -46,7 +35,7 @@ def status_arquivo_saida(nome_arquivo) -> str:
         else:
             return FALHA_TIME_OUT
 
-def executar_arquivo_bat(arquivo: str, tempo_limite: int):
+def executar_arquivo_bat(arquivo: str, tempo_limite: int = 0):
     dicionario_resultado = {}    
     try:     
         dicionario_resultado[CHAVE_SISTEMA] = arquivo
@@ -62,7 +51,10 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int):
         print(f'Arquivo {arquivo} - Início: {vinicio}')
 
         with open(vCaminhoArquivoSaida, 'w') as arquivo_saida:
-            subprocess.run([caminho_completo_bat, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA_MANTER_BUILD, timeout=tempo_limite, stdout=arquivo_saida)
+            if tempo_limite > 0:
+                subprocess.run([caminho_completo_bat, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA_MANTER_BUILD, timeout=tempo_limite, stdout=arquivo_saida)
+            else:
+                subprocess.run([caminho_completo_bat, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA_MANTER_BUILD, stdout=arquivo_saida)
         
         vfinal = datetime.now() 
         print(f'Arquivo {arquivo} - final: {vfinal}') 
@@ -94,14 +86,11 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int):
 
 # max_threads = 2
 # sistemas = ()
-for sistemas in lista_execusao_assincrona:            
-    with ThreadPoolExecutor(max_workers=2) as thread_pool_dois_sistemas:   
-        thread = partial(executar_arquivo_bat, sistemas[0].get(CHAVE_SISTEMA), sistemas[0].get(CHAVE_TEMPO_LIMITE))
-        thread_pool_dois_sistemas.submit(thread)  
-
-        if sistemas[1].get(CHAVE_SISTEMA):
-            thread1 = partial(executar_arquivo_bat, sistemas[1].get(CHAVE_SISTEMA), sistemas[1].get(CHAVE_TEMPO_LIMITE))
-            thread_pool_dois_sistemas.submit(thread1)            
+if len(lista_execusao_assincrona) > 0:        
+    with ThreadPoolExecutor(max_workers=3) as thread_pool_dois_sistemas:   
+        for sistemas in lista_execusao_assincrona:            
+            thread = partial(executar_arquivo_bat, sistemas.get(CHAVE_SISTEMA), sistemas.get(CHAVE_TEMPO_LIMITE))
+            thread_pool_dois_sistemas.submit(thread)              
         
     thread_pool_dois_sistemas.shutdown(wait=True)
 
@@ -109,8 +98,8 @@ for sistemas in lista_execusao_assincrona:
 if len(lista_execusao_sincrona) > 0:
     with ThreadPoolExecutor(max_workers=1) as thread_pool_sistema_unico:   
         for sistema in lista_execusao_sincrona:
-            if dicionario_sincrono[CHAVE_STATUS] == FALHA_ASSINAR_D:
-                print(f'Sistema {sistema[CHAVE_SISTEMA]} executando novamente devido a {FALHA_ASSINAR_D}')
+            #if sistema[CHAVE_STATUS] == FALHA_ASSINAR_D:
+            #    print(f'Sistema: {sistema[CHAVE_SISTEMA]} executando novamente devido a {FALHA_ASSINAR_D}')
             thread = partial(executar_arquivo_bat, sistema[CHAVE_SISTEMA], sistema[CHAVE_TEMPO_LIMITE])
             thread_pool_sistema_unico.submit(thread)  
         
@@ -122,11 +111,13 @@ if len(lista_execusao_sincrona) > 0:
 hora_fim = datetime.now()
 tempo_decorrido = (hora_fim - hora_inicio).total_seconds() // 60
 print(f'Tempo: {tempo_decorrido} minutos')
-for resultado in lista_resultados:    
+
+lista_resultados_ordenada = sorted(lista_resultados, key=lambda x: x[CHAVE_TEMPO])
+
+for resultado in lista_resultados_ordenada:    
     print(resultado)
 
-arquivo_json = os.path.join(CAMINHO_PASTA_RESULTADO, 'resultado.json')
-with open(arquivo_json, 'w') as arquivo:
-    json.dump(lista_resultados, arquivo, indent=4)
+with open(CAMINHO_RESULTADO_JSON, 'w') as arquivo:
+    json.dump(lista_resultados_ordenada, arquivo, indent=4)
 #print('Sistemas OK', listaOK)
 #print('Falhas: ', listaErros)
