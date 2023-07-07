@@ -67,19 +67,16 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int = 0):
             vStatus = status_saida(str(linha))
             if vStatus == FALHA_BUILD_MENSAGEM: 
                 dicionario_resultado[CHAVE_STATUS] = vStatus
-                #print('terminate')
-                sistemas_assinatura_digital.remove(arquivo)
+                #print('terminate')                
                 processo.terminate()
-                break
+                #break
             
         processo.wait()                
         vfinal = datetime.now() 
         print(f'Arquivo {arquivo} - final: {vfinal}') 
         
         vTotalSegundos = (vfinal - vinicio).total_seconds() 
-        dicionario_resultado[CHAVE_TEMPO] = int(vTotalSegundos)
-        if vStatus == FALHA_BUILD_MENSAGEM:
-            return
+        dicionario_resultado[CHAVE_TEMPO] = int(vTotalSegundos)        
     except:
         print('except1')
         dicionario_resultado[CHAVE_STATUS] = 'Falha Desconhecida' 
