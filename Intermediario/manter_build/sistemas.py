@@ -72,6 +72,9 @@ lista_execusao_assincrona = [
     {'sistema': '06_TestaDCComparaEstruturasImoveis.bat',
       'tempo_limite': 300,}, 
 
+    {'sistema': 'XML_Importer.bat',
+      'tempo_limite': 300,},
+
 ]     
 
 xxxxx = [
