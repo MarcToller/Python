@@ -31,23 +31,8 @@ def status_saida(linha: str) -> str:
 
     if str('-- FAILED') in str(linha):        
         return FALHA_BUILD_MENSAGEM
-    elif FALHA_ASSINAR_D in str(linha):        
-        return FALHA_ASSINAR_D
-    elif (str('assinatura').lower() in str(linha).lower()) or (str('digital').lower() in str(linha).lower()):
-        return 'Assinatura Digital'
-    else:
-        return ''    
-
-def verificar_arquivo_em_execucao():
-    arquivo_assinatura = 'AssinaturaDigital.bat'
-    for proc in psutil.process_iter(['name']):
-        try:
-            process_name = proc.info['name']
-            if process_name.lower() == arquivo_assinatura.lower():
-                return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    return False    
+    
+    return ''
    
 def executar_arquivo_bat(arquivo: str, tempo_limite: int = 0):
     dicionario_resultado = {}    
@@ -66,10 +51,8 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int = 0):
         for linha in processo.stdout:
             vStatus = status_saida(str(linha))
             if vStatus == FALHA_BUILD_MENSAGEM: 
-                dicionario_resultado[CHAVE_STATUS] = vStatus
-                #print('terminate')                
-                processo.terminate()
-                #break
+                dicionario_resultado[CHAVE_STATUS] = vStatus                
+                processo.terminate()                
             
         processo.wait()                
         vfinal = datetime.now() 
@@ -77,8 +60,7 @@ def executar_arquivo_bat(arquivo: str, tempo_limite: int = 0):
         
         vTotalSegundos = (vfinal - vinicio).total_seconds() 
         dicionario_resultado[CHAVE_TEMPO] = int(vTotalSegundos)        
-    except:
-        print('except1')
+    except:        
         dicionario_resultado[CHAVE_STATUS] = 'Falha Desconhecida' 
         lista_resultados.append(dicionario_resultado)        
         sistemas_assinatura_digital.remove(arquivo)
@@ -93,11 +75,9 @@ if len(lista_execusao_assincrona) > 0:
 
             ## arquivo_bat.get(CHAVE_TEMPO_LIMITE) 
             thread = partial(executar_arquivo_bat, sistema, 0)
-            thread_pool_dois_sistemas.submit(thread)            
-
+            thread_pool_dois_sistemas.submit(thread) 
         
     thread_pool_dois_sistemas.shutdown(wait=True)
-
 
 if len(lista_execusao_sincrona) > 0:
     with ThreadPoolExecutor(max_workers=1) as thread_pool_sistema_unico:   
@@ -109,7 +89,7 @@ if len(lista_execusao_sincrona) > 0:
     thread_pool_sistema_unico.shutdown(wait=True)
 
 
-#os.system('cls')
+os.system('cls')
 
 hora_fim = datetime.now()
 tempo_decorrido = (hora_fim - hora_inicio).total_seconds() // 60
@@ -122,5 +102,3 @@ for resultado in lista_resultados_ordenada:
 
 with open(CAMINHO_RESULTADO_JSON, 'w') as arquivo:
     json.dump(lista_resultados_ordenada, arquivo, indent=4)
-#print('Sistemas OK', listaOK)
-#print('Falhas: ', listaErros)
