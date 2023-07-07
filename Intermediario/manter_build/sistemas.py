@@ -1,6 +1,9 @@
 import os
 import json
 
+## "C:\Bin.Separado\Delphi\Fontes\Principal\Bats\AssinaturaDigital.bat" 
+
+
 CHAVE_SISTEMA = 'sistema'
 CHAVE_STATUS = 'status'
 CHAVE_TEMPO = 'tempo_em_segundos'
@@ -23,7 +26,7 @@ def retorna_listas() -> dict:
     lista_sincrona = []
     lista_assincrona = []        
     result = {}
-    adicionar_lista_assincrona = False;
+    adicionar_lista_assincrona = False
 
     if os.path.exists(CAMINHO_RESULTADO_JSON):
         with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
@@ -38,8 +41,7 @@ def retorna_listas() -> dict:
         if len(lista_assincrona) > 0:
             adicionar_lista_assincrona = not any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_assincrona)            
             
-        if adicionar_lista_assincrona and nome_arquivo[0] != '_':
-        #if '_Testa' in nome_arquivo:
+        if adicionar_lista_assincrona and nome_arquivo[0] != '_':        
             dic_sincrono = {}
             dic_sincrono[CHAVE_SISTEMA] = nome_arquivo
             dic_sincrono[CHAVE_TEMPO_LIMITE] = 0
@@ -50,37 +52,44 @@ def retorna_listas() -> dict:
     return result
 
 
-lista_execusao_assincrona80 = [
+lista_execusao_assincrona = [
     
-    ({'sistema': '02_TestaFrameWorkDTC.bat',
+    {'sistema': '02_TestaFrameWorkDTC.bat',
      'tempo_limite': 300},
-
-     {'sistema': 'XML_Importer.bat',
-      'tempo_limite': 300,}),
-
-    ({'sistema': '03_TestaWinContas.bat',
+    
+    {'sistema': '03_TestaWinContas.bat',
       'tempo_limite': 300},
 
-    {'sistema': 'WinLalur.bat',
-     'tempo_limite': 30,}), 
-
-    ({'sistema': '04_TestaWinDP.bat',
+    {'sistema': '04_TestaWinDP.bat',
       'tempo_limite': 300},
 
-     {'sistema': '01_TestaDCComparaEstruturas.bat',
-      'tempo_limite': 300,}), 
+    {'sistema': '01_TestaDCComparaEstruturas.bat',
+      'tempo_limite': 300,}, 
       
-    ({'sistema': '05_TestaContabMillenium.bat',
+    {'sistema': '05_TestaContabMillenium.bat',
       'tempo_limite': 300},
 
-     {'sistema': 'GestaCon.bat',
-      'tempo_limite': 300,}),       
+    {'sistema': '06_TestaDCComparaEstruturasImoveis.bat',
+      'tempo_limite': 300,}, 
 
-    ({'sistema': 'GestImov.bat',
+]     
+
+xxxxx = [
+    
+    {'sistema': 'XML_Importer.bat',
+      'tempo_limite': 300,},
+
+    {'sistema': 'GestaCon.bat',
+      'tempo_limite': 300,},       
+
+    {'sistema': 'GestImov.bat',
       'tempo_limite': 300},
 
-     {'sistema': 'GestImovServidor.bat',
-      'tempo_limite': 300,}),       
+    {'sistema': 'GestImovServidor.bat',
+      'tempo_limite': 300,},       
+      
+    {'sistema': 'WinLalur.bat',
+     'tempo_limite': 30,}, 
 ]     
 
 
