@@ -7,6 +7,7 @@ import json
 CHAVE_SISTEMA = 'sistema'
 CHAVE_STATUS = 'status'
 CHAVE_TEMPO = 'tempo_em_segundos'
+CHAVE_INFORMACAO_ADICIONAL = 'informacao_adicional'
 CHAVE_TEMPO_LIMITE = 'tempo_limite'
 CHAVE_LISTA_SINCRONA = 'lista_sincrona'
 CHAVE_LISTA_ASSINCRONA = 'lista_assincrona'
@@ -14,7 +15,7 @@ VALOR_SEM_FALHA = 'Build OK'
 CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
 CAMINHO_PASTA_RESULTADO = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'Resultado')
 CAMINHO_PASTA_FALHA = os.path.join(CAMINHO_PASTA_RESULTADO, 'Falhas')
-FALHA_BUILD = 'Build FAILED.'
+FALHA_BUILD = '-- FAILED'
 FALHA_BUILD_MENSAGEM = 'Falha no Build'
 FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
 FALHA_TIME_OUT = 'Falha de timeout'
