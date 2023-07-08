@@ -12,14 +12,17 @@ CHAVE_TEMPO_LIMITE = 'tempo_limite'
 CHAVE_LISTA_SINCRONA = 'lista_sincrona'
 CHAVE_LISTA_ASSINCRONA = 'lista_assincrona'
 VALOR_SEM_FALHA = 'Build OK'
-CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
-CAMINHO_PASTA_RESULTADO = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'Resultado')
-CAMINHO_PASTA_FALHA = os.path.join(CAMINHO_PASTA_RESULTADO, 'Falhas')
-FALHA_BUILD = '-- FAILED'
+
+#CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
+
+CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
+
+
+FALHA_BUILD = '-- FAILED'              
 FALHA_BUILD_MENSAGEM = 'Falha no Build'
 FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
-FALHA_TIME_OUT = 'Falha de timeout'
-CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_RESULTADO, 'resultado.json')
+FALHA_TIME_OUT = 'TimeOut - Build interrompido propositalmente.'
+CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'resultado.json')
 PERCENTUAL_TEMPO_LIMITE = 30
 
 
@@ -38,11 +41,22 @@ def retorna_listas() -> dict:
               dic_assic[CHAVE_TEMPO_LIMITE] = dic_arquivo[CHAVE_TEMPO] + ((dic_arquivo[CHAVE_TEMPO] * PERCENTUAL_TEMPO_LIMITE) // 100 ) 
               lista_assincrona.append(dic_assic)
 
-    for nome_arquivo in os.listdir(CAMINHO_PASTA_MANTER_BUILD):        
+    arquivos = [arquivo 
+                for arquivo in os.listdir(CAMINHO_PASTA_MANTER_BUILD)
+                  if os.path.isfile(os.path.join(CAMINHO_PASTA_MANTER_BUILD, arquivo))]
+
+    for nome_arquivo in arquivos:
+        
+        _, extensao = os.path.splitext(nome_arquivo)  
+
+        if extensao == '.json':
+            continue
+
+        adicionar_lista_assincrona = True       
         if len(lista_assincrona) > 0:
             adicionar_lista_assincrona = not any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_assincrona)            
-            
-        if adicionar_lista_assincrona and nome_arquivo[0] != '_':        
+
+        if adicionar_lista_assincrona and (nome_arquivo[0] != '_'):        
             dic_sincrono = {}
             dic_sincrono[CHAVE_SISTEMA] = nome_arquivo
             dic_sincrono[CHAVE_TEMPO_LIMITE] = 0
