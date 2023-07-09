@@ -13,6 +13,7 @@ CHAVE_LISTA_ARQUIVOS_PESADOS = 'arquivos_pesados'
 CHAVE_LISTA_ARQUIVOS_LEVES = 'arquivos_leves'
 CHAVE_LISTA_ARQUIVOS_MEDIOS = 'arquivos_medios'
 VALOR_SEM_FALHA = 'Build OK'
+CHAVE_PERCENTUAL = 'percentual'
 
 #CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
 
@@ -28,9 +29,9 @@ PERCENTUAL_TEMPO_LIMITE = 30
 
 
 def carregar_lista_json() -> list:
-    resultado = []
-    lista_arquivos = []
-    tempo_total = 0
+    
+    resultado = []    
+    
     if os.path.exists(CAMINHO_RESULTADO_JSON):
        with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
            lista_json = json.load(arquivo)
@@ -38,12 +39,11 @@ def carregar_lista_json() -> list:
              dic_resultado = {}
              dic_resultado[CHAVE_SISTEMA] = dic_arquivo[CHAVE_SISTEMA] 
              dic_resultado[CHAVE_TEMPO_LIMITE] = dic_arquivo[CHAVE_TEMPO]
-             tempo_total += dic_arquivo[CHAVE_TEMPO] 
+             dic_resultado[CHAVE_PERCENTUAL] = dic_arquivo[CHAVE_PERCENTUAL]             
              #dic_resultado[CHAVE_TEMPO_LIMITE] = dic_arquivo[CHAVE_TEMPO] + ((dic_arquivo[CHAVE_TEMPO] * PERCENTUAL_TEMPO_LIMITE) // 100 ) 
-             lista_arquivos.append(dic_resultado)        
+             resultado.append(dic_resultado)        
     
-    resultado.append(lista_arquivos)
-    resultado.append(tempo_total)
+    resultado.append(resultado)    
 
     return resultado
 
@@ -65,40 +65,30 @@ def retorna_listas() -> dict:
 
     lista_pesados = []
     lista_leves = []        
-    lista_medios = []        
-    tempo_total = 0
+    lista_medios = []            
 
-    lista_arquivo_json, tempo_total = carregar_lista_json()
+    lista_arquivo_json = carregar_lista_json()
     lista_arquivos_pasta = carrega_arquivos_pasta_manter_build()     
     
 
-    for nome_arquivo in lista_arquivos_pasta:               
-        
+    for nome_arquivo in lista_arquivos_pasta:                      
 
-        # if len(lista_arquivo_json) > 0:
-        #     encontrou_no_json = not any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_arquivo_json)          
+        dic_json = next((dicionario for dicionario in lista_arquivo_json if dicionario.get(CHAVE_SISTEMA) == nome_arquivo), None)        
 
-        
-        encontrou_no_json = any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_arquivo_json)            
-
-        if not encontrou_no_json:        
+        if not dic_json:        
             dic_pesados = {}
             dic_pesados[CHAVE_SISTEMA] = nome_arquivo
-            dic_pesados[CHAVE_TEMPO_LIMITE] = 0
+            dic_pesados[CHAVE_TEMPO_LIMITE] = 0            
             lista_pesados.append(dic_pesados)
-        else:            
-            dic_json = next((dicionario for dicionario in lista_arquivo_json if dicionario.get(CHAVE_SISTEMA) == nome_arquivo), None)
+        else: 
+            percentual = dic_json[CHAVE_PERCENTUAL]
 
-            if dic_json: 
-              tempo = dic_json[CHAVE_TEMPO_LIMITE]
-              percentual = (tempo * 100) / tempo_total
-
-              if percentual <= 10:
-                  lista_leves.append(dic_json)
-              elif percentual >= 11 and percentual <= 20:
-                  lista_medios.append(dic_json)
-              else:
-                  lista_pesados.append(dic_json)                                 
+            if percentual <= 10:                  
+                lista_leves.append(dic_json)
+            elif percentual >= 11 and percentual <= 20:                  
+                lista_medios.append(dic_json)
+            else:                  
+                lista_pesados.append(dic_json)                                 
             
     result[CHAVE_LISTA_ARQUIVOS_LEVES] = sorted(lista_leves, key=lambda x: x[CHAVE_TEMPO_LIMITE])
     result[CHAVE_LISTA_ARQUIVOS_PESADOS] = sorted(lista_pesados, key=lambda x: x[CHAVE_TEMPO_LIMITE], reverse=True)
