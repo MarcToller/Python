@@ -10,8 +10,15 @@ from sistemas import *
 import json
 
 listas = retorna_listas()
-lista_execusao_sincrona = listas[CHAVE_LISTA_SINCRONA]
-lista_execusao_assincrona = listas[CHAVE_LISTA_ASSINCRONA]
+# lista_executaveis_pesados = lista_pesados
+# lista_executaveis_leves = lista_leves
+# lista_executaveis_medios = lista_medios
+
+lista_executaveis_pesados = listas[CHAVE_LISTA_ARQUIVOS_PESADOS]
+lista_executaveis_leves = listas[CHAVE_LISTA_ARQUIVOS_LEVES]
+lista_executaveis_medios = listas[CHAVE_LISTA_ARQUIVOS_MEDIOS]
+
+
 lista_resultados = []
 
 def status_saida(linha: str) -> str: 
@@ -69,23 +76,32 @@ def executar_arquivo_bat(dicionario_execucao: dict):
 
 hora_inicio = datetime.now()
 
-with ThreadPoolExecutor(max_workers=1) as execucao_sincrona, ThreadPoolExecutor(max_workers=2) as execucao_assincrona:
+with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(max_workers=3) as execucao_leves,      ThreadPoolExecutor(max_workers=1) as execucao_medios:
     
-    if len(lista_execusao_sincrona) > 0:
-        for sistema_sincrono in lista_execusao_sincrona:
-            tarefa_sincrona = partial(executar_arquivo_bat, sistema_sincrono)
-            execucao_sincrona.submit(tarefa_sincrona)        
+    if len(lista_executaveis_pesados):
+        for sistema_pesado in lista_executaveis_pesados:
+            tarefa_pesados = partial(executar_arquivo_bat, sistema_pesado)
+            execucao_pesados.submit(tarefa_pesados)        
 
-    if len(lista_execusao_assincrona) > 0:
-        for sistema_assincrono in lista_execusao_assincrona:
-            tarefa_assincrona = partial(executar_arquivo_bat, sistema_assincrono)
-            execucao_assincrona.submit(tarefa_assincrona)
+    if len(lista_executaveis_leves) > 0:
+        for sistema_leve in lista_executaveis_leves:
+            tarefa_leves = partial(executar_arquivo_bat, sistema_leve)
+            execucao_leves.submit(tarefa_leves)    
 
-execucao_sincrona.shutdown(wait=True)
-execucao_assincrona.shutdown(wait=True)
+    execucao_leves.shutdown(wait=True) 
+
+    if len(lista_executaveis_medios) > 0:
+        for sistema_medio in lista_executaveis_medios:
+            tarefa_medios = partial(executar_arquivo_bat, sistema_medio)
+            execucao_medios.submit(tarefa_medios)  
 
 
-os.system('cls')
+execucao_pesados.shutdown(wait=True)
+execucao_medios.shutdown(wait=True)
+
+
+
+# os.system('cls')
 
 hora_fim = datetime.now()
 
