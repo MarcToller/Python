@@ -7,6 +7,7 @@ import json
 CHAVE_SISTEMA = 'sistema'
 CHAVE_STATUS = 'status'
 CHAVE_TEMPO = 'tempo_em_segundos'
+CHAVE_TEMPO_TOTAL = 'tempo_total'
 CHAVE_INFORMACAO_ADICIONAL = 'informacao_adicional'
 CHAVE_TEMPO_LIMITE = 'tempo_limite'
 CHAVE_LISTA_ARQUIVOS_PESADOS = 'arquivos_pesados'
@@ -16,9 +17,7 @@ VALOR_SEM_FALHA = 'Build OK'
 CHAVE_PERCENTUAL = 'percentual'
 
 #CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
-
 CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
-
 
 FALHA_BUILD = '-- FAILED'              
 FALHA_BUILD_MENSAGEM = 'Falha no Build'
@@ -27,30 +26,24 @@ FALHA_TIME_OUT = 'TimeOut - Build interrompido propositalmente.'
 CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'resultado.json')
 PERCENTUAL_TEMPO_LIMITE = 30
 
-
-def carregar_lista_json() -> list:
-    
-    resultado = []    
-    
+def carregar_lista_json() -> list:    
+    resultado = []        
     if os.path.exists(CAMINHO_RESULTADO_JSON):
        with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
            lista_json = json.load(arquivo)
            for dic_arquivo in lista_json:
+             if CHAVE_TEMPO_TOTAL in dic_arquivo:
+                 continue    
              dic_resultado = {}
              dic_resultado[CHAVE_SISTEMA] = dic_arquivo[CHAVE_SISTEMA] 
              dic_resultado[CHAVE_TEMPO_LIMITE] = dic_arquivo[CHAVE_TEMPO]
-             dic_resultado[CHAVE_PERCENTUAL] = dic_arquivo[CHAVE_PERCENTUAL]             
-             #dic_resultado[CHAVE_TEMPO_LIMITE] = dic_arquivo[CHAVE_TEMPO] + ((dic_arquivo[CHAVE_TEMPO] * PERCENTUAL_TEMPO_LIMITE) // 100 ) 
-             resultado.append(dic_resultado)        
-    
-    resultado.append(resultado)    
-
+             dic_resultado[CHAVE_PERCENTUAL] = dic_arquivo[CHAVE_PERCENTUAL]                          
+             resultado.append(dic_resultado)    
     return resultado
 
 def carrega_arquivos_pasta_manter_build():
     resultado = []
-    for arquivo in os.listdir(CAMINHO_PASTA_MANTER_BUILD):
-        
+    for arquivo in os.listdir(CAMINHO_PASTA_MANTER_BUILD):        
         if os.path.isfile(os.path.join(CAMINHO_PASTA_MANTER_BUILD, arquivo)):
             nome, extensao = os.path.splitext(arquivo) 
             if (nome[0] == '_') or (extensao == '.json') or ('todos' in nome.lower()):
@@ -59,21 +52,19 @@ def carrega_arquivos_pasta_manter_build():
     return resultado
 
 
-
 def retorna_listas() -> dict:    
     result = {}    
-
     lista_pesados = []
     lista_leves = []        
     lista_medios = []            
-
     lista_arquivo_json = carregar_lista_json()
-    lista_arquivos_pasta = carrega_arquivos_pasta_manter_build()     
-    
+    lista_arquivos_pasta = carrega_arquivos_pasta_manter_build()  
 
     for nome_arquivo in lista_arquivos_pasta:                      
+        dic_json = None
 
-        dic_json = next((dicionario for dicionario in lista_arquivo_json if dicionario.get(CHAVE_SISTEMA) == nome_arquivo), None)        
+        if len(lista_arquivo_json) > 0:
+            dic_json = next((dicionario for dicionario in lista_arquivo_json if dicionario.get(CHAVE_SISTEMA) == nome_arquivo), None)        
 
         if not dic_json:        
             dic_pesados = {}
@@ -85,7 +76,7 @@ def retorna_listas() -> dict:
 
             if percentual <= 10:                  
                 lista_leves.append(dic_json)
-            elif percentual >= 11 and percentual <= 20:                  
+            elif percentual >= 11 and percentual < 20:                  
                 lista_medios.append(dic_json)
             else:                  
                 lista_pesados.append(dic_json)                                 

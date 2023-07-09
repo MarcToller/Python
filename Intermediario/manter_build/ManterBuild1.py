@@ -17,25 +17,37 @@ listas = retorna_listas()
 lista_executaveis_pesados = listas[CHAVE_LISTA_ARQUIVOS_PESADOS]
 lista_executaveis_leves = listas[CHAVE_LISTA_ARQUIVOS_LEVES]
 lista_executaveis_medios = listas[CHAVE_LISTA_ARQUIVOS_MEDIOS]
-
-
-#print(lista_executaveis_pesados+lista_executaveis_leves+lista_executaveis_medios)
-
-
 lista_resultados = []
 
+def configurar_lista(lista) -> list:
+    tempo_total = 0    
 
-def definir_percentuais(lista, tempo_total):
-    for dic_resultado in lista:
+    for sistema in lista:
+        tempo_total += sistema[CHAVE_TEMPO]
+
+    tempo_total = round(tempo_total, 0)       
+              
+    lista_resultados_ordenada = sorted(lista, key=lambda x: x[CHAVE_TEMPO])
+
+    for dic_resultado in lista_resultados_ordenada:
         tempo_sistema = dic_resultado[CHAVE_TEMPO]
         percentual = (tempo_sistema * 100) / tempo_total
-        dic_resultado[CHAVE_PERCENTUAL] = round(percentual, 0)
+        dic_resultado[CHAVE_PERCENTUAL] = round(percentual, 0)    
+    
+    if tempo_total > 60:
+        tempo = f'{round(tempo_total//60, 2)} minutos'    
+    else:
+        tempo = f'{tempo_total} segundos'    
+
+    lista_resultados_ordenada.insert(0, {CHAVE_TEMPO_TOTAL: str(tempo)})    
+
+    #print(f'Tempo: {tempo}')
+    return lista_resultados_ordenada
+
 
 def status_saida(linha: str) -> str: 
-
     if str(FALHA_BUILD) in str(linha):        
-        return FALHA_BUILD_MENSAGEM
-    
+        return FALHA_BUILD_MENSAGEM    
     return VALOR_SEM_FALHA
    
 def executar_arquivo_bat(dicionario_execucao: dict):
@@ -69,8 +81,10 @@ def executar_arquivo_bat(dicionario_execucao: dict):
         
         total_segundos = (final - inicio).total_seconds()
 
-        #if (tempo_ultima_execucao > 0) and (total_segundos > tempo_ultima_execucao):
-        #    dicionario_resultado[CHAVE_INFORMACAO_ADICIONAL] = f'Build levou mais que {PERCENTUAL_TEMPO_LIMITE}% do tempo da última execução.'     
+        if (tempo_ultima_execucao > 0):
+            tempo_alerta_percentual = tempo_ultima_execucao + round(tempo_ultima_execucao * PERCENTUAL_TEMPO_LIMITE / 100, 0)
+            if  (total_segundos > tempo_alerta_percentual):
+                dicionario_resultado[CHAVE_INFORMACAO_ADICIONAL] = f'Build levou mais que {PERCENTUAL_TEMPO_LIMITE}% do tempo da última execução.'     
 
         dicionario_resultado[CHAVE_TEMPO] = int(total_segundos)        
     except subprocess.TimeoutExpired:    
@@ -106,25 +120,16 @@ with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(m
             tarefa_medios = partial(executar_arquivo_bat, sistema_medio)
             execucao_medios.submit(tarefa_medios)  
 
-
 execucao_pesados.shutdown(wait=True)
 execucao_medios.shutdown(wait=True)
-
-
 
 # os.system('cls')
 
 hora_fim = datetime.now()
 
-# tempo_decorrido = (hora_fim - hora_inicio).total_seconds() // 60
-# print(f'Tempo: {tempo_decorrido} minutos')
+tempo_total_segundos = (hora_fim - hora_inicio).total_seconds()
 
-tempo_decorrido = (hora_fim - hora_inicio).total_seconds()
-print(f'Tempo: {tempo_decorrido} segundos')
-
-definir_percentuais(lista_resultados, tempo_decorrido)
-
-lista_resultados_ordenada = sorted(lista_resultados, key=lambda x: x[CHAVE_TEMPO])
+lista_resultados_ordenada = configurar_lista(lista_resultados)
 
 for resultado in lista_resultados_ordenada:    
     print(resultado)
