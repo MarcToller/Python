@@ -33,7 +33,7 @@ def executar_arquivo_bat(dicionario_execucao: dict):
         caminho_completo_bat = os.path.join(CAMINHO_PASTA_MANTER_BUILD, arquivo) 
 
         inicio = datetime.now()  
-        print(f'Arquivo {arquivo} - Início: {inicio}')
+        print(f'{arquivo} - Início: {inicio}')
 
         processo = subprocess.Popen([caminho_completo_bat, '/NaoExecutar'], shell=True, cwd=CAMINHO_PASTA_MANTER_BUILD, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -47,7 +47,7 @@ def executar_arquivo_bat(dicionario_execucao: dict):
         processo.wait(time_out)  
 
         final = datetime.now() 
-        #print(f'Arquivo {arquivo} - final: {final}') 
+        print(f'{arquivo} - final: {final}') 
         
         total_segundos = (final - inicio).total_seconds()
 

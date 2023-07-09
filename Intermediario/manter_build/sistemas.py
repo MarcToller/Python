@@ -47,16 +47,16 @@ def retorna_listas() -> dict:
 
     for nome_arquivo in arquivos:
         
-        _, extensao = os.path.splitext(nome_arquivo)  
+        nome, extensao = os.path.splitext(nome_arquivo)  
 
-        if extensao == '.json':
+        if (nome[0] != '_') or (extensao == '.json'):
             continue
 
-        adicionar_lista_assincrona = True       
+        adicionar_lista_sincrona = True       
         if len(lista_assincrona) > 0:
-            adicionar_lista_assincrona = not any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_assincrona)            
+            adicionar_lista_sincrona = not any(dicionario[CHAVE_SISTEMA] == nome_arquivo for dicionario in lista_assincrona)            
 
-        if adicionar_lista_assincrona and (nome_arquivo[0] != '_'):        
+        if adicionar_lista_sincrona:        
             dic_sincrono = {}
             dic_sincrono[CHAVE_SISTEMA] = nome_arquivo
             dic_sincrono[CHAVE_TEMPO_LIMITE] = 0
