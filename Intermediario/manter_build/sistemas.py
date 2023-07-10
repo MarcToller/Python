@@ -19,7 +19,7 @@ CHAVE_PERCENTUAL = 'percentual'
 CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
 #CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
 
-FALHA_BUILD = '-- FAILED'              
+FALHA_BUILD = ['-- FAILED', 'Erros(s)', 'Build FAILED.']              
 FALHA_BUILD_MENSAGEM = 'Falha no Build'
 FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
 FALHA_TIME_OUT = 'TimeOut - Build interrompido propositalmente.'
@@ -82,8 +82,8 @@ def retorna_listas() -> dict:
                 lista_pesados.append(dic_json)                                 
             
     result[CHAVE_LISTA_ARQUIVOS_LEVES] = sorted(lista_leves, key=lambda x: x[CHAVE_TEMPO_LIMITE])
-    result[CHAVE_LISTA_ARQUIVOS_PESADOS] = sorted(lista_pesados, key=lambda x: x[CHAVE_TEMPO_LIMITE], reverse=True)
-    result[CHAVE_LISTA_ARQUIVOS_MEDIOS] = sorted(lista_medios, key=lambda x: x[CHAVE_TEMPO_LIMITE])
+    result[CHAVE_LISTA_ARQUIVOS_PESADOS] = sorted(lista_pesados, key=lambda x: x[CHAVE_TEMPO_LIMITE])
+    result[CHAVE_LISTA_ARQUIVOS_MEDIOS] = sorted(lista_medios, key=lambda x: x[CHAVE_TEMPO_LIMITE], reverse=True)
     return result
 
 
@@ -122,7 +122,7 @@ lista_leves = [
 ]
 
 
-lista_medios = [
+lista_medios1 = [
   
     {'sistema': 'Medio1.bat',
      'tempo_limite': 300},
@@ -135,6 +135,13 @@ lista_medios = [
 
 ]
 
+lista_medios = [
+  
+    {'sistema': 'WinLivros.bat',
+     'tempo_limite': 300},  
+    
+
+]
 
 
 

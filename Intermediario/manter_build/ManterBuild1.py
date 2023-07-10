@@ -35,7 +35,9 @@ def configurar_lista(lista) -> list:
         dic_resultado[CHAVE_PERCENTUAL] = round(percentual, 0)    
     
     if tempo_total > 60:
-        tempo = f'{round(tempo_total//60, 2)} minutos'    
+        minutos = tempo_total // 60
+        segundos = tempo_total % 60 
+        tempo = f'{minutos} minutos e {segundos} segundos'    
     else:
         tempo = f'{tempo_total} segundos'    
 
@@ -46,8 +48,9 @@ def configurar_lista(lista) -> list:
 
 
 def status_saida(linha: str) -> str: 
-    if str(FALHA_BUILD) in str(linha):        
-        return FALHA_BUILD_MENSAGEM    
+    for falha in FALHA_BUILD:
+        if str(falha) in str(linha):        
+            return FALHA_BUILD_MENSAGEM    
     return VALOR_SEM_FALHA
    
 def executar_arquivo_bat(dicionario_execucao: dict):
@@ -69,9 +72,11 @@ def executar_arquivo_bat(dicionario_execucao: dict):
 
         for linha in processo.stdout:
             dicionario_resultado[CHAVE_STATUS] = status_saida(str(linha))
+            #print(str(linha))
 
             if dicionario_resultado[CHAVE_STATUS] == FALHA_BUILD_MENSAGEM:                 
-                processo.terminate()                
+                processo.terminate() 
+                break               
             
         time_out = tempo_ultima_execucao * 2 if tempo_ultima_execucao > 0 else None
         processo.wait(time_out)  
@@ -102,11 +107,11 @@ def executar_arquivo_bat(dicionario_execucao: dict):
 hora_inicio = datetime.now()
 
 with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(max_workers=2) as execucao_leves,      ThreadPoolExecutor(max_workers=1) as execucao_medios:
-    
-    if len(lista_executaveis_pesados):
-        for sistema_pesado in lista_executaveis_pesados:
-            tarefa_pesados = partial(executar_arquivo_bat, sistema_pesado)
-            execucao_pesados.submit(tarefa_pesados)        
+
+    if len(lista_executaveis_medios) > 0:
+        for sistema_medio in lista_executaveis_medios:
+            tarefa_medios = partial(executar_arquivo_bat, sistema_medio)
+            execucao_medios.submit(tarefa_medios)  
 
     if len(lista_executaveis_leves) > 0:
         for sistema_leve in lista_executaveis_leves:
@@ -114,14 +119,15 @@ with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(m
             execucao_leves.submit(tarefa_leves)    
 
     execucao_leves.shutdown(wait=True) 
+    execucao_medios.shutdown(wait=True)
 
-    if len(lista_executaveis_medios) > 0:
-        for sistema_medio in lista_executaveis_medios:
-            tarefa_medios = partial(executar_arquivo_bat, sistema_medio)
-            execucao_medios.submit(tarefa_medios)  
+    if len(lista_executaveis_pesados):
+        for sistema_pesado in lista_executaveis_pesados:
+            tarefa_pesados = partial(executar_arquivo_bat, sistema_pesado)
+            execucao_pesados.submit(tarefa_pesados)        
 
 execucao_pesados.shutdown(wait=True)
-execucao_medios.shutdown(wait=True)
+
 
 # os.system('cls')
 
