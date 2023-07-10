@@ -101,7 +101,7 @@ def executar_arquivo_bat(dicionario_execucao: dict):
 
 hora_inicio = datetime.now()
 
-with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(max_workers=3) as execucao_leves,      ThreadPoolExecutor(max_workers=1) as execucao_medios:
+with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(max_workers=2) as execucao_leves,      ThreadPoolExecutor(max_workers=1) as execucao_medios:
     
     if len(lista_executaveis_pesados):
         for sistema_pesado in lista_executaveis_pesados:
@@ -135,4 +135,4 @@ for resultado in lista_resultados_ordenada:
     print(resultado)
 
 with open(CAMINHO_RESULTADO_JSON, 'w') as arquivo:
-    json.dump(lista_resultados_ordenada, arquivo, indent=4)
+    json.dump(lista_resultados_ordenada, arquivo, indent=4, ensure_ascii='utf-8')

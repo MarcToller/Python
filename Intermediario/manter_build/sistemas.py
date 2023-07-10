@@ -16,8 +16,8 @@ CHAVE_LISTA_ARQUIVOS_MEDIOS = 'arquivos_medios'
 VALOR_SEM_FALHA = 'Build OK'
 CHAVE_PERCENTUAL = 'percentual'
 
-#CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
-CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
+CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
+#CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
 
 FALHA_BUILD = '-- FAILED'              
 FALHA_BUILD_MENSAGEM = 'Falha no Build'
@@ -74,9 +74,9 @@ def retorna_listas() -> dict:
         else: 
             percentual = dic_json[CHAVE_PERCENTUAL]
 
-            if percentual <= 10:                  
+            if percentual <= 3:                  
                 lista_leves.append(dic_json)
-            elif percentual >= 11 and percentual < 20:                  
+            elif percentual >= 4 and percentual <= 10:                  
                 lista_medios.append(dic_json)
             else:                  
                 lista_pesados.append(dic_json)                                 
