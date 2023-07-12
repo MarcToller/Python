@@ -8,40 +8,61 @@ import os
 from datetime import datetime
 from sistemas import *
 import json
+from email_manter_build import enviar_email_resultado
+
 
 listas = retorna_listas()
-# lista_executaveis_pesados = lista_pesados
+# lista_executaveis_pesados = []#lista_pesados
 # lista_executaveis_leves = lista_leves
-# lista_executaveis_medios = lista_medios
+# lista_executaveis_medios = []#lista_medios
 
 lista_executaveis_pesados = listas[CHAVE_LISTA_ARQUIVOS_PESADOS]
 lista_executaveis_leves = listas[CHAVE_LISTA_ARQUIVOS_LEVES]
 lista_executaveis_medios = listas[CHAVE_LISTA_ARQUIVOS_MEDIOS]
 lista_resultados = []
+hora_inicio = datetime.now()
+hora_fim = hora_inicio
 
 def configurar_lista(lista) -> list:
-    tempo_total = 0    
+    tempo_lista = 0    
+    tempo_total = 0
+    tempo_string_lista = ''
+    tempo_string_total = ''
+    global hora_fim 
+    global hora_inicio
 
     for sistema in lista:
-        tempo_total += sistema[CHAVE_TEMPO]
+        tempo_lista += sistema[CHAVE_TEMPO]
 
-    tempo_total = round(tempo_total, 0)       
+    tempo_lista = round(tempo_lista, 0)       
               
     lista_resultados_ordenada = sorted(lista, key=lambda x: x[CHAVE_TEMPO])
 
     for dic_resultado in lista_resultados_ordenada:
         tempo_sistema = dic_resultado[CHAVE_TEMPO]
-        percentual = (tempo_sistema * 100) / tempo_total
+        percentual = (tempo_sistema * 100) / tempo_lista
         dic_resultado[CHAVE_PERCENTUAL] = round(percentual, 0)    
     
-    if tempo_total > 60:
-        minutos = tempo_total // 60
-        segundos = tempo_total % 60 
-        tempo = f'{minutos} minutos e {segundos} segundos'    
+    if tempo_lista > 60:
+        minutos = tempo_lista // 60
+        segundos = round(tempo_lista % 60) 
+        tempo_string_lista = f'{minutos} minutos e {segundos} segundos'    
     else:
-        tempo = f'{tempo_total} segundos'    
+        tempo_string_lista = f'{tempo_lista} segundos'   
 
-    lista_resultados_ordenada.insert(0, {CHAVE_TEMPO_TOTAL: str(tempo)})    
+
+    tempo_total = (hora_fim - hora_inicio).total_seconds()
+
+    if tempo_total > 60:
+        print('maior que 60')
+        minutos = tempo_total // 60
+        segundos = round(tempo_total % 60) 
+        tempo_string_total = f'{minutos} minutos e {segundos} segundos'    
+    else:
+        print('menor que 60')  
+        tempo_string_total = f'{tempo_total} segundos'    
+
+    lista_resultados_ordenada.insert(0, {CHAVE_TEMPO_TOTAL: str(tempo_string_total), CHAVE_TEMPO_LISTA: str(tempo_string_lista), HORA_INICIAL: str(hora_inicio), HORA_FINAL: str(hora_fim)})
 
     #print(f'Tempo: {tempo}')
     return lista_resultados_ordenada
@@ -104,9 +125,8 @@ def executar_arquivo_bat(dicionario_execucao: dict):
         
     lista_resultados.append(dicionario_resultado)  
 
-hora_inicio = datetime.now()
 
-with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(max_workers=2) as execucao_leves,      ThreadPoolExecutor(max_workers=1) as execucao_medios:
+with ThreadPoolExecutor(max_workers=1) as execucao_pesados, ThreadPoolExecutor(max_workers=3) as execucao_leves,  ThreadPoolExecutor(max_workers=2) as execucao_medios:
 
     if len(lista_executaveis_medios) > 0:
         for sistema_medio in lista_executaveis_medios:
@@ -133,12 +153,19 @@ execucao_pesados.shutdown(wait=True)
 
 hora_fim = datetime.now()
 
-tempo_total_segundos = (hora_fim - hora_inicio).total_seconds()
-
 lista_resultados_ordenada = configurar_lista(lista_resultados)
 
 for resultado in lista_resultados_ordenada:    
     print(resultado)
 
+# print('Sistemas Pesados: ', lista_executaveis_pesados)
+# print('Sistemas Médos: ', lista_executaveis_medios)
+# print('Sistemas Leves: ', lista_executaveis_leves)
+
 with open(CAMINHO_RESULTADO_JSON, 'w') as arquivo:
-    json.dump(lista_resultados_ordenada, arquivo, indent=4, ensure_ascii='utf-8')
+    json.dump(lista_resultados_ordenada, arquivo, indent=4, ensure_ascii=False) 
+ 
+enviar_email_resultado
+
+#print('desligou máquina')
+os.system("shutdown /s /t 0")

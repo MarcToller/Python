@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 
 ## "C:\Bin.Separado\Delphi\Fontes\Principal\Bats\AssinaturaDigital.bat" 
 
@@ -8,6 +9,7 @@ CHAVE_SISTEMA = 'sistema'
 CHAVE_STATUS = 'status'
 CHAVE_TEMPO = 'tempo_em_segundos'
 CHAVE_TEMPO_TOTAL = 'tempo_total'
+CHAVE_TEMPO_LISTA = 'tempo_individual'
 CHAVE_INFORMACAO_ADICIONAL = 'informacao_adicional'
 CHAVE_TEMPO_LIMITE = 'tempo_limite'
 CHAVE_LISTA_ARQUIVOS_PESADOS = 'arquivos_pesados'
@@ -15,15 +17,22 @@ CHAVE_LISTA_ARQUIVOS_LEVES = 'arquivos_leves'
 CHAVE_LISTA_ARQUIVOS_MEDIOS = 'arquivos_medios'
 VALOR_SEM_FALHA = 'Build OK'
 CHAVE_PERCENTUAL = 'percentual'
+HORA_INICIAL = 'hora_inicial'
+HORA_FINAL = 'hora_final'
 
 CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
 #CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
+
+
 
 FALHA_BUILD = ['-- FAILED', 'Erros(s)', 'Build FAILED.']              
 FALHA_BUILD_MENSAGEM = 'Falha no Build'
 FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
 FALHA_TIME_OUT = 'TimeOut - Build interrompido propositalmente.'
-CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_MANTER_BUILD, 'resultado.json')
+DATA = datetime.now()
+#ARQUIVO_JSON = 'resultado_'+str(DATA.day)+'_'+str(DATA.month)+'_'+str(DATA.year)+'.json'
+ARQUIVO_JSON = 'resultado.json'
+CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_MANTER_BUILD, ARQUIVO_JSON)
 PERCENTUAL_TEMPO_LIMITE = 30
 
 def carregar_lista_json() -> list:    
@@ -76,14 +85,14 @@ def retorna_listas() -> dict:
 
             if percentual <= 3:                  
                 lista_leves.append(dic_json)
-            elif percentual >= 4 and percentual <= 10:                  
+            elif percentual >= 4 and percentual <= 7:                  
                 lista_medios.append(dic_json)
             else:                  
                 lista_pesados.append(dic_json)                                 
             
     result[CHAVE_LISTA_ARQUIVOS_LEVES] = sorted(lista_leves, key=lambda x: x[CHAVE_TEMPO_LIMITE])
-    result[CHAVE_LISTA_ARQUIVOS_PESADOS] = sorted(lista_pesados, key=lambda x: x[CHAVE_TEMPO_LIMITE])
-    result[CHAVE_LISTA_ARQUIVOS_MEDIOS] = sorted(lista_medios, key=lambda x: x[CHAVE_TEMPO_LIMITE], reverse=True)
+    result[CHAVE_LISTA_ARQUIVOS_PESADOS] = sorted(lista_pesados, key=lambda x: x[CHAVE_TEMPO_LIMITE], reverse=True)
+    result[CHAVE_LISTA_ARQUIVOS_MEDIOS] = sorted(lista_medios, key=lambda x: x[CHAVE_TEMPO_LIMITE])
     return result
 
 
@@ -171,21 +180,21 @@ lista_execusao_assincrona = [
 
 ]     
 
-xxxxx = [
+lista_leves = [
     
-    {'sistema': 'XML_Importer.bat',
+    {'sistema': '02_TestaFrameWorkDTC.bat',
       'tempo_limite': 300,},
 
-    {'sistema': 'GestaCon.bat',
+    {'sistema': '03_TestaWinContas.bat',
       'tempo_limite': 300,},       
 
-    {'sistema': 'GestImov.bat',
+    {'sistema': '04_TestaWinDP.bat',
       'tempo_limite': 300},
 
-    {'sistema': 'GestImovServidor.bat',
+    {'sistema': '01_TestaDCComparaEstruturas.bat',
       'tempo_limite': 300,},       
       
-    {'sistema': 'WinLalur.bat',
+    {'sistema': '06_TestaDCComparaEstruturasImoveis.bat',
      'tempo_limite': 30,}, 
 ]     
 
@@ -211,7 +220,7 @@ lista_execusao_assincrona2 = [
 ]     
 
 
-#lista_arquivos_leves = ['02_TestaFrameWorkDTC.bat', '03_TestaWinContas.bat', '04_TestaWinDP.bat', '01_TestaDCComparaEstruturas.bat']
+#lista_leves = ['02_TestaFrameWorkDTC.bat', '03_TestaWinContas.bat', '04_TestaWinDP.bat', '01_TestaDCComparaEstruturas.bat']
 #lista_arquivos_pesados = ['XML_Importer.bat', 'WinLalur.bat']
 
 
