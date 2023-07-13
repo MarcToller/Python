@@ -25,6 +25,22 @@ def executar_manter_build():
     hora_inicio = datetime.now()
     hora_fim = hora_inicio
 
+    def excluir_executaveis(caminho):        
+        pastas_ignorar = ['ajuda', 'cef', 'cargasautomaticas', 'libterceiros', 'libruntime', 'libterceirosruntime', 'lib']
+        subpasta: str 
+        pasta_atual: str                                                                               
+
+        for pasta_atual, subpastas, arquivos in os.walk(caminho):            
+            for subpasta in subpastas:                
+                for arquivo in arquivos:
+                    if arquivo.endswith('.exe'):
+                        if pasta_atual.lower() in pastas_ignorar:
+                            continue
+                        caminho_completo = os.path.join(pasta_atual, arquivo)
+                        os.remove(caminho_completo)
+                        print(f"Arquivo {caminho_completo} excluído com sucesso!")    
+            
+            
     def configurar_lista(lista) -> list:
         tempo_lista = 0    
         tempo_total = 0
@@ -132,6 +148,8 @@ def executar_manter_build():
 
     if len(lista_executaveis_leves) == 0 and len(lista_executaveis_medios) == 0:
         max_threads_pesados = 1
+
+    #excluir_executaveis(CAMINHO_OUT_PUT)
 
     with ThreadPoolExecutor(max_workers=max_threads_pesados) as execucao_pesados, ThreadPoolExecutor(max_workers=3) as execucao_leves,  ThreadPoolExecutor(max_workers=2) as execucao_medios:
 
