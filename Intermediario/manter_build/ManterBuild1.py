@@ -14,9 +14,9 @@ import shutil
 
 def executar_manter_build():
     listas = retorna_listas()
-    # lista_executaveis_pesados = lista_pesados
-    # lista_executaveis_leves = lista_leves
-    # lista_executaveis_medios = lista_medios
+    # lista_executaveis_pesados = lista_execusao_assincrona
+    # lista_executaveis_leves = []#lista_leves
+    # lista_executaveis_medios = []#lista_medios
 
     lista_executaveis_pesados = listas[CHAVE_LISTA_ARQUIVOS_PESADOS]
     lista_executaveis_leves = listas[CHAVE_LISTA_ARQUIVOS_LEVES]

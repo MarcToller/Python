@@ -6,6 +6,7 @@ import smtplib
 import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 # Caminho arquivo HTML
 #CAMINHO_HTML = pathlib.Path(__file__).parent / 'aula185.html'
@@ -22,17 +23,27 @@ def enviar_email_resultado():
     smtp_password = 'kj6378'
 
     # Mensagem de texto
-    with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
-        texto_arquivo = arquivo.read()
+    # with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
+    #     texto_arquivo = arquivo.read()
         
     # Transformar nossa mensagem em MIMEMultipart
     mime_multipart = MIMEMultipart()
     mime_multipart['from'] = remetente
     mime_multipart['to'] = destinatario
-    mime_multipart['subject'] = 'resultado compilação sistemas'
+    mime_multipart['subject'] = 'resultado dos sistemas'
 
-    corpo_email = MIMEText(texto_arquivo, 'txt', 'utf-8')
-    mime_multipart.attach(corpo_email)
+
+    #body = 'Conteúdo do e-mail'
+    mime_multipart.attach(MIMEText('corpo do e-mail', 'plain'))
+
+    # Anexo - Arquivo JSON    
+    with open(CAMINHO_RESULTADO_JSON, 'rb') as file:
+        attachment = MIMEApplication(file.read(), _subtype='json')
+        attachment.add_header('Content-Disposition', 'attachment', filename='resultado.json')
+        mime_multipart.attach(attachment)    
+
+    #corpo_email = MIMEText(texto_arquivo, 'json', 'utf-8')
+    #mime_multipart.attach(corpo_email)
 
     # Envia o e-mail
     with smtplib.SMTP(smtp_server, smtp_port) as server:
