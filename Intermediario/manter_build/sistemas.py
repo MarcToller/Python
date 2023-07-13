@@ -30,9 +30,10 @@ FALHA_BUILD_MENSAGEM = 'Falha no Build'
 FALHA_ASSINAR_D = 'Falha ao tentar assinar digitalmente o projeto'
 FALHA_TIME_OUT = 'TimeOut - Build interrompido propositalmente.'
 DATA = datetime.now()
-#ARQUIVO_JSON = 'resultado_'+str(DATA.day)+'_'+str(DATA.month)+'_'+str(DATA.year)+'.json'
+ARQUIVO_JSON_COPIA = 'resultado_'+str(DATA.year)+str(DATA.month)+str(DATA.day)+str(DATA.hour)+str(DATA.minute)+str(DATA.second)+'.json'
 ARQUIVO_JSON = 'resultado.json'
 CAMINHO_RESULTADO_JSON = os.path.join(CAMINHO_PASTA_MANTER_BUILD, ARQUIVO_JSON)
+CAMINHO_RESULTADO_JSON_COPIA = os.path.join(CAMINHO_PASTA_MANTER_BUILD, ARQUIVO_JSON_COPIA)
 PERCENTUAL_TEMPO_LIMITE = 30
 
 def carregar_lista_json() -> list:    
@@ -83,9 +84,9 @@ def retorna_listas() -> dict:
         else: 
             percentual = dic_json[CHAVE_PERCENTUAL]
 
-            if percentual <= 3:                  
+            if percentual <= 5:                  
                 lista_leves.append(dic_json)
-            elif percentual >= 4 and percentual <= 7:                  
+            elif percentual >= 9 and percentual <= 11:                  
                 lista_medios.append(dic_json)
             else:                  
                 lista_pesados.append(dic_json)                                 
