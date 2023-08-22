@@ -195,8 +195,8 @@ def executar_manter_build():
     enviar_email_resultado()
  
 executar_manter_build()
-executar_manter_build()
+##executar_manter_build()
 
 #print('desligou máquina')
-#os.system("shutdown /s /t 0")
+##os.system("shutdown /s /t 0")
 

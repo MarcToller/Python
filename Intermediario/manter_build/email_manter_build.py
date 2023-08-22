@@ -20,7 +20,7 @@ def enviar_email_resultado():
     smtp_server = 'email.datacempro.com.br'
     smtp_port = 587
     smtp_username = 'marcelotoller@datacempro.com.br'
-    smtp_password = 'kj6378'
+    smtp_password = 'G2ZX4aXZPCsM'
 
     # Mensagem de texto
     # with open(CAMINHO_RESULTADO_JSON, 'r') as arquivo:
