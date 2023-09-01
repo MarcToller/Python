@@ -1,15 +1,26 @@
 import sys
-from PySide6.QtWidgets import QApplication, QPushButton
-app = QApplication(sys.argv) ## argumentos que posso passar de fora da aplicação! 
-botao1 = QPushButton('Botão 1') 
-botao1.setStyleSheet('font-size: 40px;') 
-botao1.show()  # Adiciona o widget na hierarquia e exibe a janela 
 
+from PySide6.QtWidgets import QApplication, QGridLayout, QPushButton, QWidget
 
-botao2 = QPushButton('Botão 2') 
-botao2.setStyleSheet('font-size: 40px;') 
-botao2.show()  # Adiciona o widget na hierarquia e exibe a janela
+app = QApplication(sys.argv)
 
-# Desta forma ele cria 2 janelas cada uma com um botão, ou seja, a aplicação gerencia essas "telas".. para abriri tudo numa tela só é necessário um outro componente, QMainWindow, um widget de layout suporta outros layouts dentro dele..
+botao = QPushButton('Texto do botão')
+botao.setStyleSheet('font-size: 40px;')
 
+botao2 = QPushButton('Botão 2')
+botao2.setStyleSheet('font-size: 40px;')
+
+botao3 = QPushButton('Botão 3')
+botao3.setStyleSheet('font-size: 40px;')
+
+central_widget = QWidget()
+
+layout = QGridLayout()
+central_widget.setLayout(layout)
+
+layout.addWidget(botao, 1, 1, 1, 1)
+layout.addWidget(botao2, 1, 2, 1, 1)
+layout.addWidget(botao3, 3, 1, 1, 2)
+
+central_widget.show()  # Central widget entre na hierarquia e mostre sua janela
 app.exec()  # O loop da aplicação
