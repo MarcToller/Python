@@ -36,14 +36,16 @@ layout.addWidget(botao1, 1, 1, 1, 1)
 layout.addWidget(botao2, 1, 2, 1, 1)
 layout.addWidget(botao3, 3, 1, 1, 2)
 
-@Slot ##decorador Slot
+@Slot()
 def slot_example(status_bar):
     status_bar.showMessage('O meu slot foi executado')
 
-@Slot
+@Slot()
 def slot_marcou_nao_marcou(marcou):
     print('Marcou?', marcou)
-@Slot
+
+    
+@Slot()
 def executar_hovered(action):    
     def inner():
         slot_marcou_nao_marcou(action.isChecked())
@@ -55,21 +57,21 @@ status_bar.showMessage('Mostrar mensagem na barra')
 
 # menuBar
 menu = window.menuBar()
-primeiro_menu = menu.addMenu('Primeiro menu')
+menu_principal = menu.addMenu('Menu Principal')
 
-primeira_acao = primeiro_menu.addAction('Primeira ação')
-primeira_acao.triggered.connect(lambda: slot_example(status_bar)) ## aqui é como se eu passasse um OnClik, a lambda é como se fosse um método anônimo mas que chama outro método, o slot_example, adiamento de execução..
+sub_menu1 = menu_principal.addAction('Sub Menu 1')
+sub_menu1.triggered.connect(lambda: slot_example(status_bar)) ## aqui é como se eu passasse um OnClik, a lambda é como se fosse um método anônimo mas que chama outro método, o slot_example, adiamento de execução..
 
 
-segunda_acao = primeiro_menu.addAction('Segunda ação')
-segunda_acao.setCheckable(True)  ## menu de marcar/desmarcar é uma ação de marcar e desmarcar
+sub_menu2 = menu_principal.addAction('Sub Menu 2')
+sub_menu2.setCheckable(True)  ## menu de marcar/desmarcar é uma ação de marcar e desmarcar
 ## para saber se marcou ou desmarcou, ou seja o evento usamos:
-segunda_acao.toggled.connect(slot_marcou_nao_marcou)
+sub_menu2.toggled.connect(slot_marcou_nao_marcou)
 
 ## neste caso o hovered não tem parametro como no toggled (true/false) então temos que passar um slot que adia a execução da função, o mesmo que foi feito no lambda acima mas desta vez sem usar lambda:
-segunda_acao.hovered.connect(executar_hovered(segunda_acao))
+sub_menu2.hovered.connect(executar_hovered(sub_menu2))
 
-botao1.clicked.connect(executar_hovered(segunda_acao))
+botao1.clicked.connect(executar_hovered(sub_menu2))
 
 
 
