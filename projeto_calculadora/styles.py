@@ -8,8 +8,9 @@ import qdarktheme ## instalando o tema: pip install pyqtdarktheme
 from variables import (DARKER_PRIMARY_COLOR, DARKEST_PRIMARY_COLOR,
                        PRIMARY_COLOR)
 
+## o cssClass e o specialButton são nomes que eu mesmo defino, pode ser qualquer coisa, é como se fosse property: cssClass e Valor da property: specialButton
 qss = f"""
-    QPushButton[cssClass="specialButton"] {{
+    QPushButton[cssClass="specialButton"] {{  
         color: #fff;
         background: {PRIMARY_COLOR};
     }}
