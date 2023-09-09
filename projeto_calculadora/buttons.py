@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QGridLayout, QPushButton
 from utils import converToNumber, isEmpty, isNumOrDot, isValidNumber
 from variables import MEDIUM_FONT_SIZE
 
-if TYPE_CHECKING:
+if TYPE_CHECKING: ## isto é uma "gambiarra" que evita um erro de circular import..
     from display import Display
     from info import Info
     from main_window import MainWindow
