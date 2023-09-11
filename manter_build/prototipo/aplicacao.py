@@ -1,7 +1,17 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QListWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from formPrincipal import Ui_formPrincipal
+from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt 
+
+
+class ImageLabel(QLabel):
+    def __init__(self, image_path):
+        super().__init__()
+        pixmap = QPixmap(image_path)
+        self.setPixmap(pixmap)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Alinhe a imagem no centro
 
 
 class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que ele criou 
@@ -9,19 +19,22 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
         super().__init__(parent)
         self.setupUi(self)
 
-         # Encontrar o QListView com base no nome definido no Qt Designer
-        self.listView = self.findChild(QListWidget, "listViewTodos")
-        self.modeloListView = QStandardItemModel(self)
-        self.modeloListView.setHorizontalHeaderLabels(["Coluna 1", "Coluna 2"])  # Defina os rótulos das colunas
+        self.model = QStandardItemModel()
+        self.tableViewTodos.setModel(self.model)
 
-        item1 = [QStandardItem("Item 1, Coluna 1"), QStandardItem("Item 1, Coluna 2")]
-        item2 = [QStandardItem("Item 2, Coluna 1"), QStandardItem("Item 2, Coluna 2")]
+         # Adicione as colunas à tabela
+        self.model.setHorizontalHeaderLabels(["Nome", "Imagem"])
+        self.populate_table()
 
-        self.modeloListView.appendRow(item1)
-        self.modeloListView.appendRow(item2)
+    def populate_table(self):
+        for row in range(5):
+            name_item = QStandardItem(f"Item {row + 1}")
 
-        # Associar o modelo de dados ao QListView
-        self.listViewTodos.setModel(self.modeloListView)    
+            # Crie um item com um widget personalizado (ImageLabel) para exibir a imagem
+            image_item = QStandardItem()
+            image_widget = ImageLabel(str("C:\\Users\\Toller\\Desktop\\QUADRADO.png"))
+            self.tableViewTodos.setIndexWidget(image_item.index(), image_widget)
+            self.model.appendRow([name_item, image_item])
     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
