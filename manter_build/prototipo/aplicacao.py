@@ -6,6 +6,8 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt 
 
 
+https://chat.openai.com/c/f47170ca-41f2-408c-8343-c8176de03314
+
 class ImageLabel(QLabel):
     def __init__(self, image_path):
         super().__init__()
