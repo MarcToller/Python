@@ -4,9 +4,13 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem
 from formPrincipal import Ui_formPrincipal
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt 
+import os
+from utils import CAMINHO_ARQUIVOS
 
 
-https://chat.openai.com/c/f47170ca-41f2-408c-8343-c8176de03314
+## https://chat.openai.com/c/f47170ca-41f2-408c-8343-c8176de03314
+
+## Gerar executável: pyinstaller --name="manter_build" --noconfirm --noconsole --onefile --add-data='files;files' --clean aplicacao.py
 
 class ImageLabel(QLabel):
     def __init__(self, image_path):
@@ -22,21 +26,45 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
         self.setupUi(self)
 
         self.model = QStandardItemModel()
-        self.tableViewTodos.setModel(self.model)
+        self.tableViewTodos.setModel(self.model)        
 
          # Adicione as colunas à tabela
-        self.model.setHorizontalHeaderLabels(["Nome", "Imagem"])
+        self.model.setHorizontalHeaderLabels(["Sistema", "Build", "Warning", "Hint"])
         self.populate_table()
 
     def populate_table(self):
-        for row in range(5):
+      for row in range(4):
             name_item = QStandardItem(f"Item {row + 1}")
 
-            # Crie um item com um widget personalizado (ImageLabel) para exibir a imagem
-            image_item = QStandardItem()
-            image_widget = ImageLabel(str("C:\\Users\\Toller\\Desktop\\QUADRADO.png"))
-            self.tableViewTodos.setIndexWidget(image_item.index(), image_widget)
-            self.model.appendRow([name_item, image_item])
+            # Crie um item com um QPixmap para exibir a imagem
+            
+            self.model.appendRow([name_item, self.retorna_imagem(row+1), self.retorna_imagem(row+1), self.retorna_imagem(row+1)])  
+
+      self.tableViewTodos.setColumnWidth(1,60)
+      self.tableViewTodos.setColumnWidth(2,60)
+      self.tableViewTodos.setColumnWidth(3,60) 
+
+      
+    def retorna_imagem(self, index)-> QStandardItem:
+        nome_imagem = ''
+        if index == 1:
+            nome_imagem = 'verde'
+        elif index == 2:
+            nome_imagem = 'vermelho'
+        elif index == 3:
+            nome_imagem = 'amarelo'
+        elif index == 4:
+            nome_imagem = 'cinza'
+
+        caminho_imagem = os.path.join(CAMINHO_ARQUIVOS, nome_imagem+'.png')
+
+        image_item = QStandardItem()
+        pixmap = QPixmap(caminho_imagem)        
+        image_item.setData(pixmap, Qt.DecorationRole)
+        image_item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled)
+        
+        return image_item
+            
     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
