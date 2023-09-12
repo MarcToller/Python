@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
+from PySide6.QtWidgets import QApplication, QMainWindow 
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from formPrincipal import Ui_formPrincipal
 from PySide6.QtGui import QPixmap
@@ -12,12 +12,12 @@ from utils import CAMINHO_ARQUIVOS
 
 ## Gerar executável: pyinstaller --name="manter_build" --noconfirm --noconsole --onefile --add-data='files;files' --clean aplicacao.py
 
-class ImageLabel(QLabel):
-    def __init__(self, image_path):
-        super().__init__()
-        pixmap = QPixmap(image_path)
-        self.setPixmap(pixmap)
-        self.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Alinhe a imagem no centro
+class meuQStandardItem(QStandardItem):
+    def __init__(self, text: str = ''):
+        super().__init__(text)
+        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled)
+        self.setSelectable(False)   
+        self.setTextAlignment(Qt.AlignCenter)     
 
 
 class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que ele criou 
@@ -29,23 +29,21 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
         self.tableViewTodos.setModel(self.model)        
 
          # Adicione as colunas à tabela
-        self.model.setHorizontalHeaderLabels(["Sistema", "Build", "Warning", "Hint"])
-        self.populate_table()
+        self.model.setHorizontalHeaderLabels(["Sistema", "Build", "Warning", "Hint", "Tempo"])        
+        self.adicionar_sistemas()
 
-    def populate_table(self):
+    def adicionar_sistemas(self):
       for row in range(4):
-            name_item = QStandardItem(f"Item {row + 1}")
+            name_item = meuQStandardItem(f"Item {row + 1}")            
+            tempo = meuQStandardItem('2:25')            
+            self.model.appendRow([name_item, self.retorna_imagem(row+1), self.retorna_imagem(row+1), self.retorna_imagem(row+1), tempo])  
 
-            # Crie um item com um QPixmap para exibir a imagem
-            
-            self.model.appendRow([name_item, self.retorna_imagem(row+1), self.retorna_imagem(row+1), self.retorna_imagem(row+1)])  
-
-      self.tableViewTodos.setColumnWidth(1,60)
-      self.tableViewTodos.setColumnWidth(2,60)
-      self.tableViewTodos.setColumnWidth(3,60) 
+      for coluna in range(self.model.columnCount()):  
+        if coluna > 0:
+            self.tableViewTodos.setColumnWidth(coluna,60)            
 
       
-    def retorna_imagem(self, index)-> QStandardItem:
+    def retorna_imagem(self, index)-> meuQStandardItem:
         nome_imagem = ''
         if index == 1:
             nome_imagem = 'verde'
@@ -58,11 +56,9 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
 
         caminho_imagem = os.path.join(CAMINHO_ARQUIVOS, nome_imagem+'.png')
 
-        image_item = QStandardItem()
+        image_item = meuQStandardItem()
         pixmap = QPixmap(caminho_imagem)        
-        image_item.setData(pixmap, Qt.DecorationRole)
-        image_item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled)
-        
+        image_item.setData(pixmap, Qt.DecorationRole)        
         return image_item
             
     
