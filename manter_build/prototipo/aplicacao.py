@@ -6,7 +6,11 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt 
 import os
 from utils import CAMINHO_ARQUIVOS
+import random
 
+
+lista_arquivos_teste1 = ['arquivo1', 'arquivo2', 'arquivo3', 'arquivo4']
+lista_arquivos_teste2 = ['arquivo5', 'arquivo6', 'arquivo7', 'arquivo8']
 
 ## https://chat.openai.com/c/f47170ca-41f2-408c-8343-c8176de03314
 
@@ -32,15 +36,33 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
         self.model.setHorizontalHeaderLabels(["Sistema", "Build", "Warning", "Hint", "Tempo"])        
         self.adicionar_sistemas()
 
-    def adicionar_sistemas(self):
-      for row in range(4):
-            name_item = meuQStandardItem(f"Item {row + 1}")            
-            tempo = meuQStandardItem('2:25')            
-            self.model.appendRow([name_item, self.retorna_imagem(row+1), self.retorna_imagem(row+1), self.retorna_imagem(row+1), tempo])  
+        ## deleta um item da lista
+        item_excluir = self.model.findItems('arquivo6', Qt.MatchFlag.MatchExactly)[0]
+        self.model.removeRow(item_excluir.index().row())       
 
-      for coluna in range(self.model.columnCount()):  
-        if coluna > 0:
-            self.tableViewTodos.setColumnWidth(coluna,60)            
+        item_excluir = self.model.findItems('arquivo1', Qt.MatchFlag.MatchExactly)[0]
+        self.model.removeRow(item_excluir.index().row())               
+        
+    def adicionar_sistemas(self):
+        lista_unificada = lista_arquivos_teste1 + lista_arquivos_teste2
+        for arquivo in lista_unificada:
+            name_item = meuQStandardItem(arquivo)                        
+            tempo = meuQStandardItem('2:25')                        
+            self.model.appendRow([name_item, 
+                                  self.retorna_imagem(random.randint(1, 4)), 
+                                  self.retorna_imagem(random.randint(1, 4)), 
+                                  self.retorna_imagem(random.randint(1, 4)), 
+                                  tempo])  
+          
+
+        # for row in range(4):
+        #     name_item = meuQStandardItem(f"Item {row + 1}")            
+        #     tempo = meuQStandardItem('2:25')            
+        #     self.model.appendRow([name_item, self.retorna_imagem(row+1), self.retorna_imagem(row+1), self.retorna_imagem(row+1), tempo])  
+
+        for coluna in range(self.model.columnCount()):  
+            if coluna > 0:
+                self.tableViewTodos.setColumnWidth(coluna,60)            
 
       
     def retorna_imagem(self, index)-> meuQStandardItem:
