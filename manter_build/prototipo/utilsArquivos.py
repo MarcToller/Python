@@ -24,10 +24,10 @@ CHAVE_PERCENTUAL = 'percentual'
 HORA_INICIAL = 'hora_inicial'
 HORA_FINAL = 'hora_final'
 
-CAMINHO_PASTA_MANTER_BUILD = os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
+CAMINHO_PASTA_MANTER_BUILD = ''##os.path.join(os.environ['DELPHI_SVN'], 'Atalhos', 'Executaveis', 'ManterBuild')
 #CAMINHO_PASTA_MANTER_BUILD = 'D:\\Marcelo\\Cursos\\Python\\Intermediario\\manter_build\\arquivos_bat'
 
-CAMINHO_OUT_PUT = os.path.join(os.environ['DELPHI_SVN'], 'Output')
+CAMINHO_OUT_PUT = ''##os.path.join(os.environ['DELPHI_SVN'], 'Output')
 
 FALHA_BUILD = ['-- FAILED', 'Erros(s)', 'Build FAILED.']              
 FALHA_BUILD_MENSAGEM = 'Falha no Build'

@@ -2,10 +2,10 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow 
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from formPrincipal import Ui_formPrincipal
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QPainter, QFont, QColor
 from PySide6.QtCore import Qt 
 import os
-from utils import CAMINHO_ARQUIVOS
+from utilsArquivos import CAMINHO_ARQUIVOS
 import random
 
 
@@ -30,40 +30,85 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
         self.setupUi(self)
 
         self.model = QStandardItemModel()
-        self.tableViewTodos.setModel(self.model)        
+        self.tableViewTodos.setModel(self.model)  
 
-         # Adicione as colunas à tabela
-        self.model.setHorizontalHeaderLabels(["Sistema", "Build", "Warning", "Hint", "Tempo"])        
-        self.adicionar_sistemas()
+        self.criar_colunas()        
+        self.adicionar_sistemas()        
 
-        ## deleta um item da lista
-        item_excluir = self.model.findItems('arquivo6', Qt.MatchFlag.MatchExactly)[0]
-        self.model.removeRow(item_excluir.index().row())       
+        self.pushButtonIniciar.clicked.connect(self.editar_item_teste)
 
-        item_excluir = self.model.findItems('arquivo1', Qt.MatchFlag.MatchExactly)[0]
-        self.model.removeRow(item_excluir.index().row())               
+    def criar_colunas(self):
+        header_sistema = QStandardItem("Sistema")
+        header_tipo = QStandardItem("Tipo")              
+        header_status = QStandardItem("Status")              
+        header_resultado = QStandardItem("Resultado")              
+        header_tempo = QStandardItem("Tempo") 
+        font = QFont()
+        font.setBold(True)
+
+        header_sistema.setFont(font)
+        header_tipo.setFont(font)
+        header_status.setFont(font)
+        header_resultado.setFont(font)
+        header_tempo.setFont(font)
+
+        header_sistema.setData(QColor(Qt.red), Qt.ForegroundRole)  # Cor da fonte para a coluna 1
+        header_tipo.setData(QColor(Qt.blue), Qt.ForegroundRole)  # Cor da fonte para a coluna 2
+
+        self.model.setHorizontalHeaderItem(0, header_sistema)
+        self.model.setHorizontalHeaderItem(1, header_tipo)        
+        self.model.setHorizontalHeaderItem(2, header_status)
+        self.model.setHorizontalHeaderItem(3, header_resultado)        
+        self.model.setHorizontalHeaderItem(4, header_tempo)
+
+        for coluna in range(self.model.columnCount()):  
+             if coluna == 3:
+                  self.tableViewTodos.setColumnWidth(coluna, 65)            
+             elif coluna == 0:
+                  self.tableViewTodos.setColumnWidth(coluna, 119)                              
+
+
+    def editar_item_teste(self):                 
+        image_item = self.model.findItems('arquivo5', Qt.MatchFlag.MatchExactly)[0]       
+        pixmap1 = QPixmap(os.path.join(CAMINHO_ARQUIVOS, 'cinza.png'))
+        pixmap2 = QPixmap(os.path.join(CAMINHO_ARQUIVOS, 'azul.png'))
+        pixmap3 = QPixmap(os.path.join(CAMINHO_ARQUIVOS, 'vermelho.png'))        
+
+        width = pixmap1.width() + pixmap2.width() + pixmap3.width()
+        height = max(pixmap1.height(), pixmap2.height(), pixmap3.height())
+        combined_pixmap = QPixmap(width, height)
+        combined_pixmap.fill(Qt.transparent)
+
+        # Desenha as duas imagens na QPixmap combinada
+        painter = QPainter(combined_pixmap)
+        painter.drawPixmap(0, 0, pixmap1)
+        painter.drawPixmap(0, pixmap1.height(), pixmap2)
+        painter.drawPixmap(pixmap1.width(), 0, pixmap2)
+        painter.drawPixmap(pixmap1.width() + pixmap2.width(), 0, pixmap3)
+        painter.end() 
+
+        image_item1 = meuQStandardItem()        
+        image_item1.setData(combined_pixmap, Qt.DecorationRole)        
+        self.model.setItem(image_item.index().row(), 3, image_item1)
         
+
     def adicionar_sistemas(self):
         lista_unificada = lista_arquivos_teste1 + lista_arquivos_teste2
         for arquivo in lista_unificada:
-            name_item = meuQStandardItem(arquivo)                        
-            tempo = meuQStandardItem('2:25')                        
-            self.model.appendRow([name_item, 
-                                  self.retorna_imagem(random.randint(1, 4)), 
-                                  self.retorna_imagem(random.randint(1, 4)), 
+            nome_sistema = meuQStandardItem(arquivo)                        
+            tempo = meuQStandardItem('0:00')                        
+            status = meuQStandardItem('Parado')   
+            tipo = meuQStandardItem('Pesado')  
+            
+            font = QFont()
+            font.setBold(True)              
+            nome_sistema.setFont(font)             
+
+            self.model.appendRow([nome_sistema, 
+                                  tipo, 
+                                  status,                                   
                                   self.retorna_imagem(random.randint(1, 4)), 
                                   tempo])  
-          
-
-        # for row in range(4):
-        #     name_item = meuQStandardItem(f"Item {row + 1}")            
-        #     tempo = meuQStandardItem('2:25')            
-        #     self.model.appendRow([name_item, self.retorna_imagem(row+1), self.retorna_imagem(row+1), self.retorna_imagem(row+1), tempo])  
-
-        for coluna in range(self.model.columnCount()):  
-            if coluna > 0:
-                self.tableViewTodos.setColumnWidth(coluna,60)            
-
       
     def retorna_imagem(self, index)-> meuQStandardItem:
         nome_imagem = ''
@@ -78,9 +123,27 @@ class MainWindow(QMainWindow, Ui_formPrincipal): ## Ui_MainWindow foi a tela que
 
         caminho_imagem = os.path.join(CAMINHO_ARQUIVOS, nome_imagem+'.png')
 
-        image_item = meuQStandardItem()
-        pixmap = QPixmap(caminho_imagem)        
-        image_item.setData(pixmap, Qt.DecorationRole)        
+        image_item = meuQStandardItem()        
+        pixmap1 = QPixmap(os.path.join(CAMINHO_ARQUIVOS, caminho_imagem))
+        pixmap2 = QPixmap(os.path.join(CAMINHO_ARQUIVOS, 'verde.png'))
+        pixmap3 = QPixmap(os.path.join(CAMINHO_ARQUIVOS, 'vermelho.png'))
+        
+
+        width = pixmap1.width() + pixmap2.width() + pixmap3.width()
+        height = max(pixmap1.height(), pixmap2.height(), pixmap3.height())
+        combined_pixmap = QPixmap(width, height)
+        combined_pixmap.fill(Qt.transparent)
+
+        # Desenha as duas imagens na QPixmap combinada
+        painter = QPainter(combined_pixmap)
+        painter.drawPixmap(0, 0, pixmap1)
+        painter.drawPixmap(0, pixmap1.height(), pixmap2)
+        painter.drawPixmap(pixmap1.width(), 0, pixmap2)
+        painter.drawPixmap(pixmap1.width() + pixmap2.width(), 0, pixmap3)
+        painter.end() 
+        
+        image_item.setData(combined_pixmap, Qt.DecorationRole)        
+
         return image_item
             
     
@@ -89,40 +152,3 @@ if __name__ == '__main__':
     mainWindow = MainWindow()
     mainWindow.show()
     app.exec()
-
-
-# from PySide6.QtWidgets import QApplication, QMainWindow, QListView, QStandardItemModel, QStandardItem
-# import sys
-
-# class MyApp(QMainWindow):
-#     def __init__(self):
-#         super().__init__()
-
-#         # Configurar a interface de usuário a partir do arquivo .ui criado no Qt Designer
-#         self.setupUi()
-
-#         # Criar um modelo de dados
-#         self.model = QStandardItemModel(self)
-
-#         # Associar o modelo de dados ao QListView
-#         self.listView.setModel(self.model)
-
-#         # Adicionar itens ao modelo de dados
-#         item1 = QStandardItem("Item 1")
-#         item2 = QStandardItem("Item 2")
-#         self.model.appendRow(item1)
-#         self.model.appendRow(item2)
-
-#     def setupUi(self):
-#         # Carregue a interface de usuário criada no Qt Designer
-#         # Substitua 'sua_interface.ui' pelo nome do seu arquivo .ui
-#         self.loadUi("sua_interface.ui")
-        
-#         # Encontre o QListView com base no nome definido no Qt Designer
-#         self.listView = self.findChild(QListView, "listView")
-
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     window = MyApp()
-#     window.show()
-#     sys.exit(app.exec_())
