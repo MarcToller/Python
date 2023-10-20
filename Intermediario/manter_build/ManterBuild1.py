@@ -23,23 +23,7 @@ def executar_manter_build():
     lista_executaveis_medios = listas[CHAVE_LISTA_ARQUIVOS_MEDIOS]
     lista_resultados = []
     hora_inicio = datetime.now()
-    hora_fim = hora_inicio
-
-    def excluir_executaveis(caminho):        
-        pastas_ignorar = ['ajuda', 'cef', 'cargasautomaticas', 'libterceiros', 'libruntime', 'libterceirosruntime', 'lib']
-        subpasta: str 
-        pasta_atual: str                                                                               
-
-        for pasta_atual, subpastas, arquivos in os.walk(caminho):            
-            for subpasta in subpastas:                
-                for arquivo in arquivos:
-                    if arquivo.endswith('.exe'):
-                        if pasta_atual.lower() in pastas_ignorar:
-                            continue
-                        caminho_completo = os.path.join(pasta_atual, arquivo)
-                        os.remove(caminho_completo)
-                        print(f"Arquivo {caminho_completo} excluído com sucesso!")    
-            
+    hora_fim = hora_inicio   
             
     def configurar_lista(lista) -> list:
         tempo_lista = 0    
